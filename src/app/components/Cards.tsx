@@ -64,14 +64,14 @@ export const cyrToLat = (text: string): string => {
 };
 
 export function TypeBadge({ type, isLat }: { type: PostType, isLat: boolean }) {
-  let bgColor = '#e65100'; 
+  let bgColor = 'var(--chart-4)'; 
   let label = isLat ? 'OBJAVA' : 'ОБЈАВА';
   
   if (type === 'dogadjaj') {
-    bgColor = '#166244'; 
+    bgColor = 'var(--chart-2)'; 
     label = isLat ? 'DOGAĐAJ' : 'ДОГАЂАЈ';
   } else if (type === 'protestna_setnja') {
-    bgColor = '#bd0000'; 
+    bgColor = 'var(--destructive)'; 
     label = isLat ? 'PROTESTNA ŠETNJA' : 'ПРОТЕСТНА ШЕТЊА';
   }
 
@@ -87,7 +87,7 @@ export function TypeBadge({ type, isLat }: { type: PostType, isLat: boolean }) {
 
 export function ActionButton({ icon: Icon, count, onClick }: { icon: any, count?: number, onClick?: () => void }) {
   return (
-    <button onClick={onClick} className="flex items-center gap-1.5 text-[#575168] hover:text-primary transition-colors">
+    <button onClick={onClick} className="flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors">
       <Icon className="text-[18px]" />
       {count !== undefined && <span className="text-sm font-medium">{count}</span>}
     </button>
@@ -140,7 +140,7 @@ export function PostCard({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.08)] overflow-hidden mb-4 border border-border font-['Noto_Sans']">
+    <div className="bg-card rounded-xl shadow-sm overflow-hidden mb-4 border border-border font-['Noto_Sans']">
       <ReportCommentModal 
         isOpen={!!reportCommentId}
         onClose={() => setReportCommentId(null)}
@@ -157,13 +157,13 @@ export function PostCard({
              </span>
            )}
            {showDistance && post.zbor.distance !== undefined && (
-             <span className="flex items-center gap-1 text-[9px] font-bold text-[#166244] bg-[#e8f5e9] px-1.5 py-0.5 rounded">
+             <span className="flex items-center gap-1 text-[9px] font-bold text-chart-2 bg-chart-2/10 px-1.5 py-0.5 rounded">
                 <PinIcon className="text-[10px] rotate-45" />
                 {post.zbor.distance} km
              </span>
            )}
         </div>
-        <span className="text-[11px] text-[#575168] font-medium">{t(post.timestamp)}</span>
+        <span className="text-[11px] text-muted-foreground font-medium">{t(post.timestamp)}</span>
       </div>
 
       <div className="flex items-center gap-3 p-4 pt-2">
@@ -177,12 +177,12 @@ export function PostCard({
             </h3>
             <button 
               onClick={() => onToggleFollow(post.zbor.id)}
-              className={`text-[10px] font-bold px-2 py-1 rounded transition-colors ${isFollowed ? 'text-red-600 bg-red-50 hover:bg-red-100' : 'text-primary bg-accent hover:bg-primary hover:text-white'}`}
+              className={`text-[10px] font-bold px-2 py-1 rounded transition-colors ${isFollowed ? 'text-destructive bg-destructive/10 hover:bg-destructive/20' : 'text-primary bg-accent hover:bg-primary hover:text-white'}`}
             >
               {isFollowed ? t('ОТПРАТИ') : t('ЗАПРАТИ')}
             </button>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-[#575168] mt-0.5">
+          <div className="flex items-center gap-1 text-[11px] text-primary mt-0.5">
             <PinIcon className="text-[10px]" />
             <span className="truncate">{t(post.zbor.location)}</span>
           </div>
@@ -202,35 +202,35 @@ export function PostCard({
         )}
 
         {isEvent && post.eventInfo ? (
-          <div className="bg-card rounded-lg border border-accent overflow-hidden mb-3">
+          <div className="bg-muted/10 rounded-lg border border-border overflow-hidden mb-3">
              {isProtest ? (
-               <div className="grid grid-cols-2 divide-x divide-accent">
+               <div className="grid grid-cols-2 divide-x divide-border">
                   <div className="p-3">
                      <div className="flex items-center gap-1.5 mb-2 text-primary">
                         <span className="text-[10px] font-bold uppercase tracking-wider">{t('ПОЧЕТАК')}</span>
                      </div>
                      <div className="flex flex-col gap-1.5">
                         <div className="flex items-start gap-1.5">
-                           <PinIcon className="text-[12px] text-foreground/70 mt-0.5 shrink-0" />
+                           <PinIcon className="text-[12px] text-primary mt-0.5 shrink-0" />
                            <span className="text-xs font-bold text-foreground leading-tight">{t(post.eventInfo.location)}</span>
                         </div>
                         <div className="flex items-start gap-1.5">
-                           <CalendarIcon className="text-[12px] text-foreground/70 mt-0.5 shrink-0" />
+                           <CalendarIcon className="text-[12px] text-primary mt-0.5 shrink-0" />
                            <span className="text-xs text-foreground/80 leading-tight">{t(post.eventInfo.startTime)}</span>
                         </div>
                      </div>
                   </div>
-                  <div className="p-3 bg-accent/30">
+                  <div className="p-3 bg-muted/20">
                      <div className="flex items-center gap-1.5 mb-2 text-primary">
                         <span className="text-[10px] font-bold uppercase tracking-wider">{t('КРАЈ')}</span>
                      </div>
                      <div className="flex flex-col gap-1.5">
                         <div className="flex items-start gap-1.5">
-                           <PinIcon className="text-[12px] text-foreground/70 mt-0.5 shrink-0" />
+                           <PinIcon className="text-[12px] text-primary mt-0.5 shrink-0" />
                            <span className="text-xs font-bold text-foreground leading-tight">{t(post.eventInfo.endLocation || post.eventInfo.location)}</span>
                         </div>
                         <div className="flex items-start gap-1.5">
-                           <ClockIcon className="text-[12px] text-foreground/70 mt-0.5 shrink-0" />
+                           <ClockIcon className="text-[12px] text-primary mt-0.5 shrink-0" />
                            <span className="text-xs text-foreground/80 leading-tight">{t(post.eventInfo.endTime || '')}</span>
                         </div>
                      </div>
@@ -242,14 +242,14 @@ export function PostCard({
                    <PinIcon className="text-[16px] text-primary shrink-0 mt-0.5" />
                    <div className="flex flex-col">
                       <span className="text-[10px] text-primary font-bold uppercase tracking-wider mb-0.5">{t('Локација')}</span>
-                      <span className="text-sm text-[#383838] font-medium">{t(post.eventInfo.location)}</span>
+                      <span className="text-sm text-foreground/80 font-medium">{t(post.eventInfo.location)}</span>
                    </div>
                  </div>
                  <div className="flex items-start gap-2">
                    <CalendarIcon className="text-[16px] text-primary shrink-0 mt-0.5" />
                    <div className="flex flex-col">
                       <span className="text-[10px] text-primary font-bold uppercase tracking-wider mb-0.5">{t('Време')}</span>
-                      <span className="text-sm text-[#383838] font-medium">
+                      <span className="text-sm text-foreground/80 font-medium">
                          {t(post.eventInfo.startTime)}
                          {post.eventInfo.endTime && ` - ${t(post.eventInfo.endTime)}`}
                       </span>
@@ -260,14 +260,14 @@ export function PostCard({
           </div>
         ) : (
           post.body && (
-            <p className="text-sm text-[#383838] mb-3 leading-relaxed">
+            <p className="text-sm text-foreground/80 mb-3 leading-relaxed">
               {t(post.body)}
             </p>
           )
         )}
       </div>
 
-      <div className="border-t border-[#f4f1f5]">
+      <div className="border-t border-border">
         <div className={`flex items-center justify-between px-4 py-3 ${isEvent ? 'pb-2' : ''}`}>
           <div className="flex items-center gap-6">
             <ActionButton icon={HeartIcon} count={post.likes} onClick={onAuthRequired} />
@@ -282,7 +282,7 @@ export function PostCard({
           )}
 
           {isEvent && post.attendees !== undefined && (
-            <div className="flex items-center gap-1.5 text-[#575168] bg-slate-50 px-2 py-1 rounded-md">
+            <div className="flex items-center gap-1.5 text-primary bg-muted/30 px-2 py-1 rounded-md">
               <PersonGroupIcon className="text-[16px]" />
               <span className="text-xs font-bold">{post.attendees}</span>
               <span className="text-[10px] uppercase tracking-wider font-bold hidden sm:inline">{t('ДОЛАЗИ')}</span>
@@ -292,7 +292,7 @@ export function PostCard({
 
         {isEvent && (
           <div className="px-4 pb-3">
-             <button onClick={onAuthRequired} className="w-full flex items-center justify-center gap-2 bg-primary text-white px-4 py-2.5 rounded-lg text-sm font-bold hover:bg-[#3d2a6a] transition-colors shadow-sm">
+             <button onClick={onAuthRequired} className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors shadow-sm">
                <CheckmarkCircleIcon className="text-[18px]" />
                {t('Придружи се')}
              </button>
@@ -301,7 +301,7 @@ export function PostCard({
       </div>
 
       {showComments && (
-        <div className="bg-slate-50 border-t border-slate-100 p-4 animate-in slide-in-from-top-2 duration-200">
+        <div className="bg-muted/10 border-t border-border p-4 animate-in slide-in-from-top-2 duration-200">
            <h5 className="text-xs font-bold text-foreground mb-3 uppercase tracking-wider">{t('Коментари')} ({post.comments || mockComments.length})</h5>
            <div className="space-y-4 mb-4">
               {mockComments.map(comment => (
@@ -310,21 +310,21 @@ export function PostCard({
                       {comment.author.charAt(0)}
                    </div>
                    <div className="flex-1">
-                      <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                      <div className="bg-card p-3 rounded-lg border border-border shadow-sm">
                          <div className="flex justify-between items-start mb-1">
                             <span className="text-xs font-bold text-foreground">{comment.author}</span>
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] text-slate-400">{comment.time}</span>
+                              <span className="text-[10px] text-muted-foreground">{comment.time}</span>
                               <button 
                                 onClick={() => handleReportComment(comment.id)} 
-                                className="text-slate-300 hover:text-red-500 transition-colors"
+                                className="text-muted-foreground/50 hover:text-destructive transition-colors"
                                 title={t('Пријави коментар')}
                               >
                                 <ExclamationmarkTriangleIcon className="text-[14px]" />
                               </button>
                             </div>
                          </div>
-                         <p className="text-xs text-slate-700 leading-relaxed">{comment.text}</p>
+                         <p className="text-xs text-foreground/80 leading-relaxed">{comment.text}</p>
                       </div>
                    </div>
                 </div>
@@ -332,7 +332,7 @@ export function PostCard({
            </div>
            <button 
              onClick={onAuthRequired}
-             className="w-full py-2 bg-white border border-dashed border-slate-300 rounded-lg text-xs font-medium text-slate-500 hover:text-primary hover:border-primary transition-colors"
+             className="w-full py-2 bg-card border border-dashed border-border rounded-lg text-xs font-medium text-muted-foreground hover:text-primary hover:border-primary transition-colors"
            >
              {t('Пријави се да би коментарисао')}
            </button>
@@ -362,18 +362,18 @@ export function ZborCard({
 
   return (
     <div 
-      className="bg-white rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.08)] overflow-hidden mb-4 border border-border font-['Noto_Sans'] cursor-pointer hover:border-primary transition-all relative"
+      className="bg-card rounded-xl shadow-sm overflow-hidden mb-4 border border-border font-['Noto_Sans'] cursor-pointer hover:border-primary transition-all relative"
       onClick={() => onZborClick?.(zbor)}
     >
       <div className="absolute top-0 right-0 p-2 flex flex-col items-end gap-1">
          {isFollowed && (
-           <span className="flex items-center gap-1 text-[9px] font-bold text-white bg-primary px-2 py-1 rounded-bl-lg rounded-tr-lg">
+           <span className="flex items-center gap-1 text-[9px] font-bold text-primary-foreground bg-primary px-2 py-1 rounded-bl-lg rounded-tr-lg">
               <PersonCheckmarkIcon className="text-[10px]" />
               {t('ПРАТИТЕ')}
            </span>
          )}
          {showDistance && zbor.distance !== undefined && (
-           <span className="flex items-center gap-1 text-[9px] font-bold text-[#166244] bg-[#e8f5e9] px-2 py-1 rounded-bl-lg">
+           <span className="flex items-center gap-1 text-[9px] font-bold text-chart-2 bg-chart-2/10 px-2 py-1 rounded-bl-lg">
               <PinIcon className="text-[10px] rotate-45" />
               {zbor.distance} km
            </span>
@@ -388,43 +388,43 @@ export function ZborCard({
             <h3 className="text-base font-bold text-foreground truncate">
               {t(zbor.name)}
             </h3>
-            <div className="flex items-center gap-1 text-xs text-[#575168]">
+            <div className="flex items-center gap-1 text-xs text-primary">
               <PinIcon className="text-[12px]" />
               <span className="truncate">{t(zbor.location)}</span>
             </div>
           </div>
         </div>
 
-        <p className="text-sm text-[#383838] line-clamp-2 mb-4 leading-relaxed">
+        <p className="text-sm text-foreground/80 line-clamp-2 mb-4 leading-relaxed">
           {t(zbor.description)}
         </p>
 
-        <div className="grid grid-cols-3 gap-2 py-3 border-y border-[#f4f1f5] mb-4">
+        <div className="grid grid-cols-3 gap-2 py-3 border-y border-border mb-4">
           <div className="flex flex-col items-center">
             <div className="flex items-center gap-1 text-primary mb-0.5">
               <PersonGroupIcon className="text-[14px]" />
               <span className="text-sm font-bold">{zbor.stats.members}</span>
             </div>
-            <span className="text-[9px] text-[#575168] uppercase tracking-wider font-bold">{t('Чланова')}</span>
+            <span className="text-[9px] text-primary uppercase tracking-wider font-bold">{t('Чланова')}</span>
           </div>
-          <div className="flex flex-col items-center border-x border-[#f4f1f5]">
+          <div className="flex flex-col items-center border-x border-border">
             <div className="flex items-center gap-1 text-primary mb-0.5">
               <MegaphoneIcon className="text-[14px]" />
               <span className="text-sm font-bold">{zbor.stats.posts}</span>
             </div>
-            <span className="text-[9px] text-[#575168] uppercase tracking-wider font-bold">{t('Објава')}</span>
+            <span className="text-[9px] text-primary uppercase tracking-wider font-bold">{t('Објава')}</span>
           </div>
           <div className="flex flex-col items-center">
             <div className="flex items-center gap-1 text-primary mb-0.5">
               <CalendarIcon className="text-[14px]" />
               <span className="text-sm font-bold">{zbor.stats.events}</span>
             </div>
-            <span className="text-[9px] text-[#575168] uppercase tracking-wider font-bold">{t('Догађаја')}</span>
+            <span className="text-[9px] text-primary uppercase tracking-wider font-bold">{t('Догађаја')}</span>
           </div>
         </div>
 
         <button 
-          className={`w-full flex items-center justify-center gap-2 border-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors ${isFollowed ? 'bg-red-50 border-red-200 text-red-600 hover:bg-red-100' : 'bg-white border-primary text-primary hover:bg-accent'}`}
+          className={`w-full flex items-center justify-center gap-2 border-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors ${isFollowed ? 'bg-destructive/10 border-destructive/20 text-destructive hover:bg-destructive/20' : 'bg-card border-primary text-primary hover:bg-accent'}`}
           onClick={(e) => {
             e.stopPropagation();
             onToggleFollow(zbor.id);

@@ -192,7 +192,7 @@ function AuthModal({ isOpen, onClose, t }: { isOpen: boolean, onClose: () => voi
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-xl font-bold text-foreground">{t('Пријава')}</h3>
             <button onClick={onClose} className="p-2 hover:bg-muted rounded-full transition-colors">
-               <XMarkIcon className="text-[20px] text-muted-foreground" />
+               <XMarkIcon className="text-[20px] text-primary" />
             </button>
           </div>
           <div className="space-y-4">
@@ -363,7 +363,7 @@ function ZborDetailPage({
           <ChevronLeftIcon className="text-[20px]" />
           <span>{t('Назад')}</span>
         </button>
-        <button className="text-foreground">
+        <button className="text-primary">
           <MagnifyingGlassIcon className="text-[22px]" />
         </button>
       </div>
@@ -376,7 +376,7 @@ function ZborDetailPage({
           <div>
             <h1 className="text-2xl lg:text-3xl font-bold text-foreground leading-tight">{t(zbor.name)}</h1>
             <div className="flex items-center gap-2 mt-1">
-              <PinIcon className="text-[14px] text-foreground/70" />
+              <PinIcon className="text-[14px] text-primary" />
               <span className="text-sm text-foreground/70 font-medium">{t(zbor.location)}</span>
               {showDistance && zbor.distance !== undefined && (
                 <span className="text-[10px] font-bold text-chart-2 bg-chart-2/10 px-1.5 py-0.5 rounded ml-1 inline-block">
@@ -464,7 +464,7 @@ export default function App() {
   const [followedZborIds, setFollowedZborIds] = useState<string[]>(['z1', 'z2']);
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
-  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'calendar' | 'map'>('list');
   const [filters, setFilters] = useState<FilterState>({
     query: '',
     dateRange: 'all',
@@ -480,6 +480,14 @@ export default function App() {
     setFilters(newFilters);
     if (newFilters.sort === 'closest' && !locationEnabled) {
       handleEnableLocation();
+    }
+  };
+  
+  // Sync activeView with viewMode for Map
+  const handleViewChange = (mode: 'list' | 'calendar' | 'map') => {
+    setViewMode(mode);
+    if (mode === 'map' && activeView !== 'feed') {
+      setActiveView('feed');
     }
   };
 
@@ -718,24 +726,24 @@ export default function App() {
 
         <nav className="flex-1 px-4 space-y-1">
           <button 
-            onClick={() => setActiveView('feed')}
-            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${activeView === 'feed' ? 'bg-accent text-primary' : 'text-foreground/70 hover:bg-card'}`}
+            onClick={() => { setActiveView('feed'); setViewMode('list'); }}
+            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${activeView === 'feed' && viewMode === 'list' ? 'bg-accent text-primary' : 'text-foreground/70 hover:bg-card'}`}
           >
-            <HouseIcon className="text-[22px]" />
+            <HouseIcon className="text-[22px] text-primary" />
             {t('Почетна')}
           </button>
           <button 
-            onClick={() => setActiveView('map')}
-            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${activeView === 'map' ? 'bg-accent text-primary' : 'text-foreground/70 hover:bg-card'}`}
+            onClick={() => { setActiveView('feed'); setViewMode('map'); }}
+            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${activeView === 'feed' && viewMode === 'map' ? 'bg-accent text-primary' : 'text-foreground/70 hover:bg-card'}`}
           >
-            <LocationPinIcon className="text-[22px]" />
+            <LocationPinIcon className="text-[22px] text-primary" />
             {t('Мапа')}
           </button>
           <button 
             onClick={() => setActiveView('zborovi')}
             className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${activeView === 'zborovi' ? 'bg-accent text-primary' : 'text-foreground/70 hover:bg-card'}`}
           >
-            <CompassIcon className="text-[22px]" />
+            <CompassIcon className="text-[22px] text-primary" />
             {t('Истражи зборове')}
           </button>
           <a 
@@ -744,7 +752,7 @@ export default function App() {
             rel="noopener noreferrer"
             className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all text-foreground/70 hover:bg-card"
           >
-            <TasklistIcon className="text-[22px]" />
+            <TasklistIcon className="text-[22px] text-primary" />
             {t('Анкета')}
           </a>
           <button 
@@ -752,7 +760,7 @@ export default function App() {
             className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl font-bold transition-all ${activeView === 'notifications' ? 'bg-accent text-primary' : 'text-foreground/70 hover:bg-card'}`}
           >
             <div className="flex items-center gap-4">
-              <BellIcon className="text-[22px]" />
+              <BellIcon className="text-[22px] text-primary" />
               {t('Обавештења')}
             </div>
             {unreadCount > 0 && (
@@ -763,11 +771,11 @@ export default function App() {
 
         <div className="px-4 py-8 space-y-2 border-t border-accent">
            <button className="w-full flex items-center gap-4 px-4 py-2 text-sm font-medium text-foreground/70 hover:text-primary">
-              <CogIcon className="text-[18px]" />
+              <CogIcon className="text-[18px] text-primary" />
               {t('Подешавања')}
            </button>
            <button className="w-full flex items-center gap-4 px-4 py-2 text-sm font-medium text-foreground/70 hover:text-primary">
-              <QuestionmarkIcon className="text-[18px]" />
+              <QuestionmarkIcon className="text-[18px] text-primary" />
               {t('Центар за помоћ')}
            </button>
            <div className="mt-4 pt-4 border-t border-accent px-4 flex items-center gap-3">
@@ -837,20 +845,32 @@ export default function App() {
               )}
 
               {activeView === 'feed' && (
-                <div className="flex-1 flex flex-col px-4 py-6 lg:px-8">
-                   <div className="max-w-4xl mx-auto w-full">
-                      <SearchFilterBar 
-                        onFilterChange={handleFilterChange} 
-                        onSaveSearch={handleSaveSearch}
-                        isLoggedIn={!!user}
-                        language={language}
-                        onEnableLocation={handleEnableLocation}
-                        locationEnabled={locationEnabled}
-                        viewMode={viewMode}
-                        onViewChange={setViewMode}
-                      />
+                <div className={`flex-1 flex flex-col px-4 py-6 lg:px-8 ${viewMode === 'map' ? 'h-full !p-0' : ''}`}>
+                   <div className={`mx-auto w-full ${viewMode === 'map' ? 'h-full max-w-none flex flex-col' : 'max-w-4xl'}`}>
+                      <div className={viewMode === 'map' ? 'absolute top-4 left-4 right-4 z-[500] max-w-4xl mx-auto' : ''}>
+                        <SearchFilterBar 
+                          onFilterChange={handleFilterChange} 
+                          onSaveSearch={handleSaveSearch}
+                          isLoggedIn={!!user}
+                          language={language}
+                          onEnableLocation={handleEnableLocation}
+                          locationEnabled={locationEnabled}
+                          viewMode={viewMode}
+                          onViewChange={handleViewChange}
+                        />
+                      </div>
                       
-                      {viewMode === 'calendar' ? (
+                      {viewMode === 'map' ? (
+                         <div className="flex-1 h-full min-h-[500px]">
+                            <MapComponent 
+                              zborovi={sortedZborovi} 
+                              posts={posts.length > 0 ? posts : MOCK_POSTS} 
+                              onZborClick={handleZborClick}
+                              onPostClick={(post) => handleZborClick(post.zbor)}
+                              language={language}
+                            />
+                         </div>
+                      ) : viewMode === 'calendar' ? (
                         <div className="mb-10">
                           <CalendarView 
                             events={sortedPosts}
@@ -915,8 +935,9 @@ export default function App() {
                 </div>
               )}
 
-              {activeView === 'map' && (
-                <div className="h-full flex flex-col relative bg-slate-100 min-h-[500px]">
+              {/* Deprecated standalone map view, kept for direct navigation if needed, but redundant now */}
+              {activeView === 'map' && viewMode !== 'map' && (
+                 <div className="h-full flex flex-col relative bg-muted/30 min-h-[500px]">
                     <MapComponent 
                       zborovi={sortedZborovi} 
                       posts={posts.length > 0 ? posts : MOCK_POSTS} 
@@ -1051,31 +1072,31 @@ export default function App() {
         </div>
 
         {/* Mobile Bottom Nav (Visible on Mobile Only) */}
-        <div className="lg:hidden absolute bottom-0 left-0 right-0 bg-white border-t border-accent px-2 pt-3 pb-6 flex items-center justify-around z-50 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] h-[80px]">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border px-2 pt-3 pb-6 flex items-center justify-around z-[1000] shadow-[0_-4px_12px_rgba(0,0,0,0.05)] h-[80px]">
           <button 
-            onClick={() => setActiveView('feed')}
-            className={`flex flex-col items-center gap-1 transition-all min-w-[60px] ${activeView === 'feed' ? 'text-primary' : 'text-foreground/70'}`}
+            onClick={() => { setActiveView('feed'); setViewMode('list'); }}
+            className={`flex flex-col items-center justify-center gap-1 transition-all min-w-[60px] h-full ${activeView === 'feed' && viewMode === 'list' ? 'text-primary' : 'text-primary/60'}`}
           >
-            <HouseIcon className="text-[24px]" strokeWidth={activeView === 'feed' ? 1.5 : 1} />
+            <HouseIcon className="text-[24px]" strokeWidth={activeView === 'feed' && viewMode === 'list' ? 1.5 : 1} />
             <span className="text-[10px] font-bold uppercase tracking-tight">{t('Почетна')}</span>
           </button>
           <button 
-            onClick={() => setActiveView('map')}
-            className={`flex flex-col items-center gap-1 transition-all min-w-[60px] ${activeView === 'map' ? 'text-primary' : 'text-foreground/70'}`}
+            onClick={() => { setActiveView('feed'); setViewMode('map'); }}
+            className={`flex flex-col items-center justify-center gap-1 transition-all min-w-[60px] h-full ${activeView === 'feed' && viewMode === 'map' ? 'text-primary' : 'text-primary/60'}`}
           >
-            <LocationPinIcon className="text-[24px]" strokeWidth={activeView === 'map' ? 1.5 : 1} />
+            <LocationPinIcon className="text-[24px]" strokeWidth={activeView === 'feed' && viewMode === 'map' ? 1.5 : 1} />
             <span className="text-[10px] font-bold uppercase tracking-tight">{t('Мапа')}</span>
           </button>
           <button 
-            onClick={() => setActiveView('zborovi')}
-            className={`flex flex-col items-center gap-1 transition-all min-w-[60px] ${activeView === 'zborovi' ? 'text-primary' : 'text-foreground/70'}`}
+            onClick={() => { setActiveView('zborovi'); }}
+            className={`flex flex-col items-center justify-center gap-1 transition-all min-w-[60px] h-full ${activeView === 'zborovi' ? 'text-primary' : 'text-primary/60'}`}
           >
             <CompassIcon className="text-[24px]" strokeWidth={activeView === 'zborovi' ? 1.5 : 1} />
             <span className="text-[10px] font-bold uppercase tracking-tight">{t('Зборови')}</span>
           </button>
           <button 
-            onClick={() => setActiveView('notifications')}
-            className={`flex flex-col items-center gap-1 relative transition-all min-w-[60px] ${activeView === 'notifications' ? 'text-primary' : 'text-foreground/70'}`}
+            onClick={() => { setActiveView('notifications'); }}
+            className={`flex flex-col items-center justify-center gap-1 relative transition-all min-w-[60px] h-full ${activeView === 'notifications' ? 'text-primary' : 'text-primary/60'}`}
           >
             <div className="relative">
               <BellIcon className="text-[24px]" strokeWidth={activeView === 'notifications' ? 1.5 : 1} />
@@ -1088,8 +1109,8 @@ export default function App() {
             <span className="text-[10px] font-bold uppercase tracking-tight">{t('Обавештења')}</span>
           </button>
           <button 
-             onClick={() => setActiveView('profile')}
-             className={`flex flex-col items-center gap-1 transition-all min-w-[60px] ${activeView === 'profile' ? 'text-primary' : 'text-foreground/70'}`}
+             onClick={() => { setActiveView('profile'); }}
+             className={`flex flex-col items-center justify-center gap-1 transition-all min-w-[60px] h-full ${activeView === 'profile' ? 'text-primary' : 'text-primary/60'}`}
           >
             <PersonIcon className="text-[24px]" strokeWidth={activeView === 'profile' ? 1.5 : 1} />
             <span className="text-[10px] font-bold uppercase tracking-tight">{t('Профил')}</span>

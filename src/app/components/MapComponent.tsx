@@ -1,5 +1,5 @@
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet';
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
 import '../../styles/map.css';
@@ -20,10 +20,12 @@ const CALENDAR_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height=
 const MEGAPHONE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>`;
 
 // Custom Icons
-const createCustomIcon = (color: string, svg: string) => {
+const createCustomIcon = (type: 'zbor' | 'event' | 'protest', svg: string) => {
+  const markerClass = type === 'zbor' ? 'marker-zbor' : type === 'event' ? 'marker-event' : 'marker-protest';
+  
   return L.divIcon({
-    className: 'custom-marker',
-    html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+    className: 'custom-marker-container', 
+    html: `<div class="map-marker ${markerClass}">
              ${svg}
            </div>`,
     iconSize: [30, 30],
@@ -32,9 +34,22 @@ const createCustomIcon = (color: string, svg: string) => {
   });
 };
 
-const zborIcon = createCustomIcon('#6B21A8', PERSON_GROUP_SVG); // Purple for Zborovi
-const eventIcon = createCustomIcon('#EAB308', CALENDAR_SVG);   // Yellow for Events
-const protestIcon = createCustomIcon('#EF4444', MEGAPHONE_SVG); // Red for Protests
+const zborIcon = createCustomIcon('zbor', PERSON_GROUP_SVG); 
+const eventIcon = createCustomIcon('event', CALENDAR_SVG);   
+const protestIcon = createCustomIcon('protest', MEGAPHONE_SVG);
+
+// Simple Cyrillic to Latin converter (duplicated here to avoid circular dependencies or import issues if not exported)
+const cyrToLat = (text: string) => {
+  const map: {[key: string]: string} = {
+    'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Ђ': 'Đ', 'Е': 'E', 'Ж': 'Ž', 'З': 'Z', 'И': 'I',
+    'Ј': 'J', 'К': 'K', 'Л': 'L', 'Љ': 'Lj', 'М': 'M', 'Н': 'N', 'Њ': 'Nj', 'О': 'O', 'П': 'P', 'Р': 'R',
+    'С': 'S', 'Т': 'T', 'Ћ': 'Ć', 'У': 'U', 'Ф': 'F', 'Х': 'H', 'Ц': 'C', 'Ч': 'Č', 'Џ': 'Dž', 'Ш': 'Š',
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'ђ': 'đ', 'е': 'e', 'ж': 'ž', 'з': 'z', 'и': 'i',
+    'ј': 'j', 'к': 'k', 'л': 'l', 'љ': 'lj', 'м': 'm', 'н': 'n', 'њ': 'nj', 'о': 'o', 'п': 'p', 'р': 'r',
+    'с': 's', 'т': 't', 'ћ': 'ć', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'č', 'џ': 'dž', 'ш': 'š'
+  };
+  return text.replace(/[А-Шња-шђџ]/g, char => map[char] || char);
+};
 
 interface MapComponentProps {
   zborovi: ZborData[];
@@ -43,6 +58,33 @@ interface MapComponentProps {
   onPostClick: (post: PostData) => void;
   language: 'cir' | 'lat';
 }
+
+const MapLegend = ({ language }: { language: 'cir' | 'lat' }) => {
+  const isLat = language === 'lat';
+  const t = (txt: string) => isLat ? cyrToLat(txt) : txt;
+
+  return (
+    <div className="absolute bottom-8 left-4 z-[1000] bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg border border-gray-200 animate-in fade-in duration-300">
+      <h4 className="text-xs font-bold mb-2 text-foreground uppercase tracking-wide">{t('Легенда')}</h4>
+      <div className="space-y-2.5">
+        <div className="flex items-center gap-2.5">
+          <div className="w-5 h-5 rounded-full bg-primary border-2 border-white/50 shadow-sm flex items-center justify-center relative">
+             <div className="absolute inset-0 rounded-full border border-primary opacity-30 animate-pulse"></div>
+          </div>
+          <span className="text-xs font-medium text-foreground">{t('Збор')}</span>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <div className="w-5 h-5 rounded-full bg-[#EAB308] border-2 border-white shadow-sm"></div>
+          <span className="text-xs font-medium text-foreground">{t('Догађај')}</span>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <div className="w-5 h-5 rounded-full bg-[#EF4444] border-2 border-white shadow-sm"></div>
+          <span className="text-xs font-medium text-foreground">{t('Протест')}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Bounds for Serbia (approximate)
 const SERBIA_BOUNDS: L.LatLngBoundsExpression = [
@@ -64,18 +106,44 @@ const getMockCoords = (id: string, location: string): [number, number] => {
   return [44.7866 + latOffset, 20.4489 + lngOffset];
 };
 
+const FitBounds = ({ zborovi, posts }: { zborovi: ZborData[], posts: PostData[] }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    const bounds = L.latLngBounds([]);
+    let hasMarkers = false;
+
+    zborovi.forEach(zbor => {
+       const [lat, lng] = getMockCoords(zbor.id, zbor.location);
+       bounds.extend([lat, lng]);
+       hasMarkers = true;
+    });
+
+    posts.filter(p => p.type === 'dogadjaj' || p.type === 'protestna_setnja').forEach(post => {
+       const [lat, lng] = getMockCoords(post.id, post.eventInfo?.location || '');
+       bounds.extend([lat, lng]);
+       hasMarkers = true;
+    });
+
+    if (hasMarkers && bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    }
+  }, [zborovi, posts, map]);
+
+  return null;
+};
+
 export default function MapComponent({ zborovi, posts, onZborClick, onPostClick, language }: MapComponentProps) {
   // Filter only events and protests from posts
   const mapEvents = posts.filter(p => p.type === 'dogadjaj' || p.type === 'protestna_setnja');
   
   // Use OpenStreetMap standard tiles which display local names (Cyrillic in Serbia).
-  // This avoids the English "Montenegro" issue.
-  // Note: Changing to Latin dynamically on raster tiles is limited without a custom vector tile server,
-  // so we stick to the most authentic local source (OSM) which is correct for the region.
   const tileUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
   return (
-    <div className="h-full w-full relative z-0">
+    <div className="h-full w-full relative z-0 font-['Noto_Sans']">
+      <MapLegend language={language} />
+      
       <MapContainer 
         center={[44.7866, 20.4489]} 
         zoom={13} 
@@ -84,6 +152,7 @@ export default function MapComponent({ zborovi, posts, onZborClick, onPostClick,
         minZoom={7}
         zoomControl={false}
       >
+        <FitBounds zborovi={zborovi} posts={posts} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url={tileUrl}
@@ -123,16 +192,7 @@ export default function MapComponent({ zborovi, posts, onZborClick, onPostClick,
         <MarkerClusterGroup
           chunkedLoading
           iconCreateFunction={(cluster) => {
-             // Check if cluster contains mostly protests or events
-             // For now we default to event style unless we can inspect children props easily. 
-             // Simple hack: check if majority of children have a specific property? 
-             // Actually, `cluster.getAllChildMarkers()` returns the markers.
-             // We can use that to determine the color.
-             const markers = cluster.getAllChildMarkers();
-             // Just use a generic "event" style (yellow) or "protest" style (red) if mixed?
-             // Or separate them? The user said "brojevi dogadjaja i brojevi setnji".
-             // Let's create TWO groups for events and protests if possible, but mapEvents is mixed.
-             // I will refactor to separate them below.
+             // Basic clustering for events
             return L.divIcon({
               html: `<div class="cluster-event"><div><span>${cluster.getChildCount()}</span></div></div>`,
               className: 'marker-cluster marker-cluster-small',

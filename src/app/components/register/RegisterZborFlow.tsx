@@ -79,7 +79,7 @@ export function RegisterZborFlow({ isOpen, onClose, t }: RegisterZborFlowProps) 
         <div className="bg-background rounded-2xl w-full max-w-lg h-[600px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
             <div className="p-6 pb-2 border-b border-accent flex justify-end">
                 <button onClick={onClose} className="p-2 hover:bg-card rounded-full transition-colors">
-                    <XMarkIcon className="text-[20px] text-muted-foreground" />
+                    <XMarkIcon className="text-[20px] text-primary" />
                 </button>
             </div>
             <div className="flex-1 p-6 pt-4 overflow-hidden">
@@ -106,12 +106,12 @@ export function RegisterZborFlow({ isOpen, onClose, t }: RegisterZborFlowProps) 
                 {step === 2 && t('Локација збора')}
                 {step === 3 && t('Детаљи збора')}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground font-medium leading-relaxed">
                 {t('Корак')} {step} {t('од')} 3
               </p>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-card rounded-full transition-colors">
-              <XMarkIcon className="text-[20px] text-muted-foreground" />
+              <XMarkIcon className="text-[20px] text-primary" />
             </button>
           </div>
           

@@ -70,6 +70,41 @@ app.post(`${API_PREFIX}/signup`, async (c) => {
   }
 });
 
+// GET Mesne Zajednice
+app.get(`${API_PREFIX}/mesne-zajednice`, async (c) => {
+  try {
+    const MOCK_DATA = [
+      { id: 1, name: 'Vračar', opstina: 'Vračar', grad: 'Beograd', lat: 44.7981, lon: 20.4716, osm_id: 'm1' },
+      { id: 2, name: 'Stari Grad', opstina: 'Stari Grad', grad: 'Beograd', lat: 44.8178, lon: 20.4570, osm_id: 'm2' },
+      { id: 3, name: 'Novi Beograd', opstina: 'Novi Beograd', grad: 'Beograd', lat: 44.8152, lon: 20.4208, osm_id: 'm3' },
+      { id: 4, name: 'Zemun', opstina: 'Zemun', grad: 'Beograd', lat: 44.8436, lon: 20.4005, osm_id: 'm4' },
+      { id: 5, name: 'Palilula', opstina: 'Palilula', grad: 'Beograd', lat: 44.8158, lon: 20.4735, osm_id: 'm5' },
+      { id: 6, name: 'Voždovac', opstina: 'Voždovac', grad: 'Beograd', lat: 44.7770, lon: 20.4764, osm_id: 'm6' },
+      { id: 7, name: 'Liman 1', opstina: 'Novi Sad', grad: 'Novi Sad', lat: 45.2441, lon: 19.8435, osm_id: 'm7' },
+      { id: 8, name: 'Liman 2', opstina: 'Novi Sad', grad: 'Novi Sad', lat: 45.2400, lon: 19.8390, osm_id: 'm8' },
+      { id: 9, name: 'Liman 3', opstina: 'Novi Sad', grad: 'Novi Sad', lat: 45.2360, lon: 19.8350, osm_id: 'm9' },
+      { id: 10, name: 'Liman 4', opstina: 'Novi Sad', grad: 'Novi Sad', lat: 45.2320, lon: 19.8300, osm_id: 'm10' },
+      { id: 11, name: 'Medijana', opstina: 'Medijana', grad: 'Niš', lat: 43.3225, lon: 21.9033, osm_id: 'm11' },
+      { id: 12, name: 'Palilula (Niš)', opstina: 'Palilula', grad: 'Niš', lat: 43.3100, lon: 21.8900, osm_id: 'm12' },
+      { id: 13, name: 'Aerodrom', opstina: 'Aerodrom', grad: 'Kragujevac', lat: 44.0200, lon: 20.9200, osm_id: 'm13' },
+      { id: 14, name: 'Stari Grad (Kragujevac)', opstina: 'Stari Grad', grad: 'Kragujevac', lat: 44.0100, lon: 20.9100, osm_id: 'm14' },
+    ];
+
+    // Try to get from KV first
+    let stored = await kv.get("mesne_zajednice");
+    
+    // If not found, seed it
+    if (!stored) {
+      await kv.set("mesne_zajednice", MOCK_DATA);
+      stored = MOCK_DATA;
+    }
+
+    return c.json(stored);
+  } catch (err) {
+    return c.json({ error: 'Failed to fetch mesne zajednice' }, 500);
+  }
+});
+
 // Zbor Registration with File Upload
 app.post(`${API_PREFIX}/register-zbor`, async (c) => {
   try {

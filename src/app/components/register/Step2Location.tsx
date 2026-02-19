@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { RegisterFormData, MesnaZajednica } from './types';
 import { MagnifyingGlassIcon, XMarkIcon, InformationIcon } from '@navikt/aksel-icons';
 import { toast } from 'sonner';
+import { projectId } from '/utils/supabase/info';
+
+const SERVER_URL = `https://${projectId}.supabase.co/functions/v1/make-server-e535a4b3`;
 
 interface Step2LocationProps {
   formData: RegisterFormData;
@@ -11,29 +14,25 @@ interface Step2LocationProps {
   t: (s: string) => string;
 }
 
-const MOCK_MESNE_ZAJEDNICE: MesnaZajednica[] = [
-  { id: 1, name: 'Vračar', opstina: 'Vračar', grad: 'Beograd', lat: 44.7981, lon: 20.4716, osm_id: 'm1' },
-  { id: 2, name: 'Stari Grad', opstina: 'Stari Grad', grad: 'Beograd', lat: 44.8178, lon: 20.4570, osm_id: 'm2' },
-  { id: 3, name: 'Novi Beograd', opstina: 'Novi Beograd', grad: 'Beograd', lat: 44.8152, lon: 20.4208, osm_id: 'm3' },
-  { id: 4, name: 'Zemun', opstina: 'Zemun', grad: 'Beograd', lat: 44.8436, lon: 20.4005, osm_id: 'm4' },
-  { id: 5, name: 'Palilula', opstina: 'Palilula', grad: 'Beograd', lat: 44.8158, lon: 20.4735, osm_id: 'm5' },
-  { id: 6, name: 'Voždovac', opstina: 'Voždovac', grad: 'Beograd', lat: 44.7770, lon: 20.4764, osm_id: 'm6' },
-  { id: 7, name: 'Liman 1', opstina: 'Novi Sad', grad: 'Novi Sad', lat: 45.2441, lon: 19.8435, osm_id: 'm7' },
-  { id: 8, name: 'Liman 2', opstina: 'Novi Sad', grad: 'Novi Sad', lat: 45.2400, lon: 19.8390, osm_id: 'm8' },
-  { id: 9, name: 'Liman 3', opstina: 'Novi Sad', grad: 'Novi Sad', lat: 45.2360, lon: 19.8350, osm_id: 'm9' },
-  { id: 10, name: 'Liman 4', opstina: 'Novi Sad', grad: 'Novi Sad', lat: 45.2320, lon: 19.8300, osm_id: 'm10' },
-  { id: 11, name: 'Medijana', opstina: 'Medijana', grad: 'Niš', lat: 43.3225, lon: 21.9033, osm_id: 'm11' },
-  { id: 12, name: 'Palilula (Niš)', opstina: 'Palilula', grad: 'Niš', lat: 43.3100, lon: 21.8900, osm_id: 'm12' },
-  { id: 13, name: 'Aerodrom', opstina: 'Aerodrom', grad: 'Kragujevac', lat: 44.0200, lon: 20.9200, osm_id: 'm13' },
-  { id: 14, name: 'Stari Grad (Kragujevac)', opstina: 'Stari Grad', grad: 'Kragujevac', lat: 44.0100, lon: 20.9100, osm_id: 'm14' },
-];
-
 export function Step2Location({ formData, updateFormData, onNext, onBack, t }: Step2LocationProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<MesnaZajednica[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [availableMesneZajednice, setAvailableMesneZajednice] = useState<MesnaZajednica[]>([]);
+
+  // Fetch Mesne Zajednice from backend
+  useEffect(() => {
+    fetch(`${SERVER_URL}/mesne-zajednice`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+           setAvailableMesneZajednice(data);
+        }
+      })
+      .catch(err => console.error('Error fetching mesne zajednice:', err));
+  }, []);
 
   // Debounce search
   useEffect(() => {
@@ -45,8 +44,8 @@ export function Step2Location({ formData, updateFormData, onNext, onBack, t }: S
       }
 
       setLoading(true);
-      // Mock search instead of Supabase query
-      const filtered = MOCK_MESNE_ZAJEDNICE.filter(mz => 
+      // Search in fetched data
+      const filtered = availableMesneZajednice.filter(mz => 
         mz.name.toLowerCase().includes(query.toLowerCase()) || 
         mz.grad.toLowerCase().includes(query.toLowerCase())
       );
@@ -57,7 +56,7 @@ export function Step2Location({ formData, updateFormData, onNext, onBack, t }: S
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [query, availableMesneZajednice]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
