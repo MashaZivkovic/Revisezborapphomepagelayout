@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { RegisterFormData, MesnaZajednica } from './types';
 import { MagnifyingGlassIcon, XMarkIcon, InformationIcon } from '@navikt/aksel-icons';
 import { toast } from 'sonner';
-import { projectId } from '/utils/supabase/info';
+import { projectId, publicAnonKey } from '/utils/supabase/info';
 
 const SERVER_URL = `https://${projectId}.supabase.co/functions/v1/make-server-e535a4b3`;
 
@@ -24,14 +24,30 @@ export function Step2Location({ formData, updateFormData, onNext, onBack, t }: S
 
   // Fetch Mesne Zajednice from backend
   useEffect(() => {
-    fetch(`${SERVER_URL}/mesne-zajednice`)
-      .then(res => res.json())
+    setLoading(true);
+    fetch(`${SERVER_URL}/mesne-zajednice`, {
+      headers: {
+        'Authorization': `Bearer ${publicAnonKey}`
+      }
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
       .then(data => {
+        console.log('Mesne zajednice fetched:', data);
         if (Array.isArray(data)) {
            setAvailableMesneZajednice(data);
+        } else {
+           console.error('Data is not an array:', data);
+           toast.error(t('Greška pri učitavanju podataka o lokacijama.'));
         }
       })
-      .catch(err => console.error('Error fetching mesne zajednice:', err));
+      .catch(err => {
+        console.error('Error fetching mesne zajednice:', err);
+        toast.error(t('Nije moguće učitati lokacije. Proverite konekciju.'));
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   // Debounce search
@@ -45,9 +61,11 @@ export function Step2Location({ formData, updateFormData, onNext, onBack, t }: S
 
       setLoading(true);
       // Search in fetched data
+      const q = query.toLowerCase();
       const filtered = availableMesneZajednice.filter(mz => 
-        mz.name.toLowerCase().includes(query.toLowerCase()) || 
-        mz.grad.toLowerCase().includes(query.toLowerCase())
+        (mz.name && mz.name.toLowerCase().includes(q)) || 
+        (mz.opstina && mz.opstina.toLowerCase().includes(q)) ||
+        (mz.grad && mz.grad.toLowerCase().includes(q))
       );
       
       setResults(filtered);
@@ -93,33 +111,32 @@ export function Step2Location({ formData, updateFormData, onNext, onBack, t }: S
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-1">
         <div className="mb-6">
-           <div className="flex justify-between items-center mb-2">
-            <label className="block text-[16px] text-foreground font-normal leading-[20px]">
-              {t('Локација')}*
-            </label>
-            <InformationIcon className="text-primary text-[24px]" title={t('Одаберите месне заједнице које ваш збор покрива')} />
-          </div>
-
           <div className="relative" ref={dropdownRef}>
             <div className="relative">
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t('Нпр. Врачар, Београд, Србија')}
-                className="w-full bg-background border border-primary rounded-lg py-3 pl-4 pr-10 text-[16px] text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-primary">
-                {loading ? (
-                  <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
-                ) : (
-                  <MagnifyingGlassIcon className="text-[20px]" />
-                )}
+              <div className="flex justify-between items-center mb-1.5 ml-1">
+                <label className="block text-xs font-bold text-foreground uppercase">{t('Локација')}*</label>
+                <InformationIcon className="text-primary text-[16px]" title={t('Одаберите месне заједнице које ваш збор покрива')} />
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t('Нпр. Врачар, Београд, Србија')}
+                  className="w-full bg-card border border-border rounded-xl py-3 pl-4 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  {loading ? (
+                    <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+                  ) : (
+                    <MagnifyingGlassIcon className="text-[20px]" />
+                  )}
+                </div>
               </div>
             </div>
 
             {showDropdown && results.length > 0 && (
-              <div className="absolute z-50 w-full mt-1 bg-white border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto">
                 {results.map((mz) => (
                   <button
                     key={mz.id}

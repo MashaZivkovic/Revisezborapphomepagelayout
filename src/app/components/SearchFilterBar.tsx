@@ -154,7 +154,7 @@ export function SearchFilterBar({
           placeholder={t('Претражи зборове, догађаје...')}
           value={filters.query}
           onChange={(e) => handleFilterChange('query', e.target.value)}
-          className="w-full pl-10 pr-4 py-3 bg-muted/30 border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground font-medium"
+          className="w-full pl-10 pr-4 py-3 bg-muted/30 border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-foreground/40 font-medium"
         />
       </div>
 
@@ -217,7 +217,7 @@ export function SearchFilterBar({
           <div className="flex bg-muted/50 p-1 rounded-lg">
             <button
               onClick={() => handleViewChangeInternal('list')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'list' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'list' ? 'bg-card shadow-sm text-primary' : 'text-foreground/70 hover:text-foreground'}`}
               title={t('Листа')}
             >
               <TasklistIcon className={`text-lg ${viewMode === 'list' ? '' : 'text-primary'}`} />
@@ -225,7 +225,7 @@ export function SearchFilterBar({
             </button>
             <button
               onClick={() => handleViewChangeInternal('calendar')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'calendar' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'calendar' ? 'bg-card shadow-sm text-primary' : 'text-foreground/70 hover:text-foreground'}`}
               title={t('Календар')}
             >
               <CalendarIcon className={`text-lg ${viewMode === 'calendar' ? '' : 'text-primary'}`} />
@@ -233,7 +233,7 @@ export function SearchFilterBar({
             </button>
             <button
               onClick={() => handleViewChangeInternal('map')}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'map' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'map' ? 'bg-card shadow-sm text-primary' : 'text-foreground/70 hover:text-foreground'}`}
               title={t('Мапа')}
             >
               <LocationPinIcon className={`text-lg ${viewMode === 'map' ? '' : 'text-primary'}`} />

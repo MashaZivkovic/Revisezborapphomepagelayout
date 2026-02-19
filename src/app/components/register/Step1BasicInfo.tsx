@@ -19,43 +19,43 @@ export function Step1BasicInfo({ formData, updateFormData, onNext, onCancel, t }
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-primary uppercase mb-1.5 ml-1">{t('Ваше име')}</label>
+              <label className="block text-xs font-bold text-foreground uppercase mb-1.5 ml-1">{t('Ваше име')}</label>
               <input
                 value={formData.name}
                 onChange={(e) => updateFormData({ name: e.target.value })}
                 type="text"
-                className="w-full bg-card border-none rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 text-foreground"
+                className="w-full bg-card border border-border rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground"
                 placeholder={t('Петар Петровић')}
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-primary uppercase mb-1.5 ml-1">{t('Име збора')}</label>
+              <label className="block text-xs font-bold text-foreground uppercase mb-1.5 ml-1">{t('Име збора')}</label>
               <input
                 value={formData.zborName}
                 onChange={(e) => updateFormData({ zborName: e.target.value })}
                 type="text"
-                className="w-full bg-card border-none rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 text-foreground"
+                className="w-full bg-card border border-border rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground"
                 placeholder={t('Збор ...')}
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-primary uppercase mb-1.5 ml-1">{t('Имејл (који је на листи подршке)')}</label>
+            <label className="block text-xs font-bold text-foreground uppercase mb-1.5 ml-1">{t('Имејл (који је на листи подршке)')}</label>
             <input
               value={formData.email}
               onChange={(e) => updateFormData({ email: e.target.value })}
               type="email"
-              className="w-full bg-card border-none rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 text-foreground"
+              className="w-full bg-card border border-border rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground"
               placeholder="primer@domain.com"
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-primary uppercase mb-1.5 ml-1">{t('Лозинка за апликацију')}</label>
+            <label className="block text-xs font-bold text-foreground uppercase mb-1.5 ml-1">{t('Лозинка за апликацију')}</label>
             <input
               value={formData.password}
               onChange={(e) => updateFormData({ password: e.target.value })}
               type="password"
-              className="w-full bg-card border-none rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 text-foreground"
+              className="w-full bg-card border border-border rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground"
               placeholder="••••••••"
             />
           </div>

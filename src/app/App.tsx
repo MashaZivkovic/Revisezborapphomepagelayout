@@ -3,7 +3,8 @@ import {
   HouseIcon, BellIcon, PersonIcon, MagnifyingGlassIcon, PinIcon, LocationPinIcon, MenuGridIcon, TasklistIcon, 
   CalendarIcon, MegaphoneIcon, ChevronLeftIcon, PaperplaneIcon, ExternalLinkIcon, XMarkIcon, 
   ThumbUpIcon, ThumbDownIcon, ChatIcon, PlusIcon, ChevronDownIcon, CompassIcon, 
-  CheckmarkIcon, MenuElipsisVerticalIcon, LeaveIcon, CogIcon, QuestionmarkIcon, CheckmarkCircleIcon
+  CheckmarkIcon, MenuElipsisVerticalIcon, LeaveIcon, CogIcon, QuestionmarkIcon, CheckmarkCircleIcon,
+  SunIcon, MoonIcon
 } from '@navikt/aksel-icons';
 import { PostCard, ZborCard, PostData, ZborData, PostType, cyrToLat } from './components/Cards';
 import { SearchFilterBar, FilterState } from './components/SearchFilterBar';
@@ -186,7 +187,7 @@ function AuthModal({ isOpen, onClose, t }: { isOpen: boolean, onClose: () => voi
 
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-6 backdrop-blur-sm">
+    <div className="fixed inset-0 bg-black/60 z-[2000] flex items-center justify-center p-6 backdrop-blur-sm">
       <div className="bg-background rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
         <div className="p-8">
           <div className="flex justify-between items-start mb-6">
@@ -222,7 +223,7 @@ function AuthModal({ isOpen, onClose, t }: { isOpen: boolean, onClose: () => voi
 function LocationBanner({ onEnable, t }: { onEnable: () => void, t: (s: string) => string }) {
   return (
     <div className="bg-accent border border-primary/10 rounded-xl p-4 mb-6 flex items-start gap-3 shadow-sm">
-       <div className="bg-white p-2 rounded-full text-primary shadow-sm shrink-0">
+       <div className="bg-card p-2 rounded-full text-primary shadow-sm shrink-0">
           <PinIcon className="text-[18px] rotate-45" />
        </div>
        <div className="flex-1">
@@ -465,6 +466,16 @@ export default function App() {
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'calendar' | 'map'>('list');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
   const [filters, setFilters] = useState<FilterState>({
     query: '',
     dateRange: 'all',
@@ -633,7 +644,7 @@ export default function App() {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-black/60 z-[100] lg:hidden animate-in fade-in duration-200 flex justify-end">
+        <div className="fixed inset-0 bg-black/60 z-[2000] lg:hidden animate-in fade-in duration-200 flex justify-end">
           <div className="w-[320px] h-full bg-background shadow-2xl animate-in slide-in-from-right duration-300 overflow-y-auto">
             <div className="p-6 flex flex-col gap-6">
               {/* Header */}
@@ -717,9 +728,9 @@ export default function App() {
       )}
 
       {/* Desktop Sidebar Navigation */}
-      <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-accent shrink-0 z-40">
+      <aside className="hidden lg:flex flex-col w-72 bg-background border-r border-accent shrink-0 z-40">
         <div className="p-8 flex items-center gap-3">
-          <div className="w-[140px] h-[35px]">
+          <div className="w-[120px] h-[42px]">
              <ZborAppLogoT2 />
           </div>
         </div>
@@ -796,10 +807,17 @@ export default function App() {
         
         {/* Mobile Header (Hidden on Desktop) */}
         <div className="lg:hidden bg-primary px-4 flex items-center justify-between shrink-0 z-30 h-[60px]">
-          <div className="flex items-center gap-2 w-[120px] h-[35px]">
+          <div className="flex items-center gap-2 w-[70px] h-[25px]">
              <ZborAppLogoT1 />
           </div>
           <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
+              className="flex items-center gap-1 border border-white/60 px-2 py-1 rounded-md text-[10px] text-white font-bold transition-all hover:bg-white/10"
+              title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+            >
+               {theme === 'light' ? <MoonIcon className="text-[14px]" /> : <SunIcon className="text-[14px]" />}
+            </button>
             <button 
               onClick={() => setLanguage(prev => prev === 'cir' ? 'lat' : 'cir')}
               onMouseEnter={() => setIsLangHovered(true)}
@@ -815,8 +833,15 @@ export default function App() {
         </div>
 
         {/* Desktop Top Search (Hidden on Mobile) */}
-        <header className="hidden lg:flex items-center justify-end px-8 py-4 bg-white border-b border-accent shrink-0">
+        <header className="hidden lg:flex items-center justify-end px-8 py-4 bg-background border-b border-accent shrink-0">
            <div className="flex items-center gap-6">
+              <button 
+                onClick={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
+                className="p-2 rounded-full hover:bg-accent transition-colors text-primary"
+                title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+              >
+                 {theme === 'light' ? <MoonIcon className="text-[20px]" /> : <SunIcon className="text-[20px]" />}
+              </button>
               <button 
                 onClick={() => setLanguage(prev => prev === 'cir' ? 'lat' : 'cir')}
                 onMouseEnter={() => setIsLangHovered(true)}

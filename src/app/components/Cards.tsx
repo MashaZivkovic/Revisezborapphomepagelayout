@@ -1,9 +1,10 @@
 import React from 'react';
 import { 
-  HeartIcon, ChatIcon, ExternalLinkIcon, PinIcon, PersonGroupIcon, CalendarIcon, MegaphoneIcon, 
+  HeartIcon, ChatIcon, ExternalLinkIcon, PersonGroupIcon, CalendarIcon, MegaphoneIcon, 
   CheckmarkCircleIcon, PlusIcon, MenuElipsisHorizontalIcon, PersonCheckmarkIcon, 
   XMarkIcon, ClockIcon, ExclamationmarkTriangleIcon
 } from '@navikt/aksel-icons';
+import LocationIcon from '../../imports/Icons-13-242';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { toast } from 'sonner';
 import { ReportCommentModal } from './ReportCommentModal';
@@ -158,12 +159,12 @@ export function PostCard({
            )}
            {showDistance && post.zbor.distance !== undefined && (
              <span className="flex items-center gap-1 text-[9px] font-bold text-chart-2 bg-chart-2/10 px-1.5 py-0.5 rounded">
-                <PinIcon className="text-[10px] rotate-45" />
+                <LocationIcon className="text-[10px]" />
                 {post.zbor.distance} km
              </span>
            )}
         </div>
-        <span className="text-[11px] text-muted-foreground font-medium">{t(post.timestamp)}</span>
+        <span className="text-[11px] text-foreground/60 font-medium">{t(post.timestamp)}</span>
       </div>
 
       <div className="flex items-center gap-3 p-4 pt-2">
@@ -183,7 +184,7 @@ export function PostCard({
             </button>
           </div>
           <div className="flex items-center gap-1 text-[11px] text-primary mt-0.5">
-            <PinIcon className="text-[10px]" />
+            <LocationIcon className="text-[12px]" />
             <span className="truncate">{t(post.zbor.location)}</span>
           </div>
         </div>
@@ -211,7 +212,7 @@ export function PostCard({
                      </div>
                      <div className="flex flex-col gap-1.5">
                         <div className="flex items-start gap-1.5">
-                           <PinIcon className="text-[12px] text-primary mt-0.5 shrink-0" />
+                           <LocationIcon className="text-[12px] text-primary mt-0.5 shrink-0" />
                            <span className="text-xs font-bold text-foreground leading-tight">{t(post.eventInfo.location)}</span>
                         </div>
                         <div className="flex items-start gap-1.5">
@@ -226,7 +227,7 @@ export function PostCard({
                      </div>
                      <div className="flex flex-col gap-1.5">
                         <div className="flex items-start gap-1.5">
-                           <PinIcon className="text-[12px] text-primary mt-0.5 shrink-0" />
+                           <LocationIcon className="text-[12px] text-primary mt-0.5 shrink-0" />
                            <span className="text-xs font-bold text-foreground leading-tight">{t(post.eventInfo.endLocation || post.eventInfo.location)}</span>
                         </div>
                         <div className="flex items-start gap-1.5">
@@ -239,7 +240,7 @@ export function PostCard({
              ) : (
                <div className="p-3">
                  <div className="flex items-start gap-2 mb-2">
-                   <PinIcon className="text-[16px] text-primary shrink-0 mt-0.5" />
+                   <LocationIcon className="text-[14px] text-primary shrink-0 mt-0.5" />
                    <div className="flex flex-col">
                       <span className="text-[10px] text-primary font-bold uppercase tracking-wider mb-0.5">{t('Локација')}</span>
                       <span className="text-sm text-foreground/80 font-medium">{t(post.eventInfo.location)}</span>
@@ -314,10 +315,10 @@ export function PostCard({
                          <div className="flex justify-between items-start mb-1">
                             <span className="text-xs font-bold text-foreground">{comment.author}</span>
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] text-muted-foreground">{comment.time}</span>
+                              <span className="text-[10px] text-foreground/60">{comment.time}</span>
                               <button 
                                 onClick={() => handleReportComment(comment.id)} 
-                                className="text-muted-foreground/50 hover:text-destructive transition-colors"
+                                className="text-foreground/40 hover:text-destructive transition-colors"
                                 title={t('Пријави коментар')}
                               >
                                 <ExclamationmarkTriangleIcon className="text-[14px]" />
@@ -332,7 +333,7 @@ export function PostCard({
            </div>
            <button 
              onClick={onAuthRequired}
-             className="w-full py-2 bg-card border border-dashed border-border rounded-lg text-xs font-medium text-muted-foreground hover:text-primary hover:border-primary transition-colors"
+             className="w-full py-2 bg-card border border-dashed border-border rounded-lg text-xs font-medium text-foreground/60 hover:text-primary hover:border-primary transition-colors"
            >
              {t('Пријави се да би коментарисао')}
            </button>
@@ -374,7 +375,7 @@ export function ZborCard({
          )}
          {showDistance && zbor.distance !== undefined && (
            <span className="flex items-center gap-1 text-[9px] font-bold text-chart-2 bg-chart-2/10 px-2 py-1 rounded-bl-lg">
-              <PinIcon className="text-[10px] rotate-45" />
+              <LocationIcon className="text-[10px]" />
               {zbor.distance} km
            </span>
          )}
@@ -389,7 +390,7 @@ export function ZborCard({
               {t(zbor.name)}
             </h3>
             <div className="flex items-center gap-1 text-xs text-primary">
-              <PinIcon className="text-[12px]" />
+              <LocationIcon className="text-[12px]" />
               <span className="truncate">{t(zbor.location)}</span>
             </div>
           </div>

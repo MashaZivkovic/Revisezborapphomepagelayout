@@ -55,7 +55,7 @@ export function CalendarView({
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-300">
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex justify-center">
+      <div className="bg-background rounded-xl shadow-sm border border-border p-4 flex justify-center">
         <Calendar
           mode="single"
           selected={date}
@@ -65,13 +65,13 @@ export function CalendarView({
             hasEvent: eventDates
           }}
           modifiersClassNames={{
-            hasEvent: "bg-purple-100 font-bold text-purple-700 hover:bg-purple-200"
+            hasEvent: "bg-accent font-bold text-primary hover:bg-accent/80"
           }}
         />
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+        <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
           {date ? (
             <>
               <span className="capitalize">
@@ -79,7 +79,7 @@ export function CalendarView({
                 {/* Fallback for cyrillic locale if not available or just use text replacement */}
                 {!isLat && ` (${t(format(date, 'EEEE, d. MMMM'))})`}
               </span>
-              <span className="text-sm font-normal text-slate-500 ml-2">
+              <span className="text-sm font-normal text-muted-foreground ml-2">
                 ({selectedDateEvents.length} {t('догађаја')})
               </span>
             </>
@@ -104,8 +104,8 @@ export function CalendarView({
             ))}
           </div>
         ) : (
-          <div className="text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-            <p className="text-slate-500">{t('Нема догађаја за изабрани датум.')}</p>
+          <div className="text-center py-10 bg-muted/20 rounded-xl border border-dashed border-border">
+            <p className="text-muted-foreground">{t('Нема догађаја за изабрани датум.')}</p>
           </div>
         )}
       </div>

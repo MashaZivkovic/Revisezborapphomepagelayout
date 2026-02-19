@@ -71,9 +71,7 @@ app.post(`${API_PREFIX}/signup`, async (c) => {
 });
 
 // GET Mesne Zajednice
-app.get(`${API_PREFIX}/mesne-zajednice`, async (c) => {
-  try {
-    const MOCK_DATA = [
+const MOCK_DATA = [
       { id: 1, name: 'Vračar', opstina: 'Vračar', grad: 'Beograd', lat: 44.7981, lon: 20.4716, osm_id: 'm1' },
       { id: 2, name: 'Stari Grad', opstina: 'Stari Grad', grad: 'Beograd', lat: 44.8178, lon: 20.4570, osm_id: 'm2' },
       { id: 3, name: 'Novi Beograd', opstina: 'Novi Beograd', grad: 'Beograd', lat: 44.8152, lon: 20.4208, osm_id: 'm3' },
@@ -88,22 +86,30 @@ app.get(`${API_PREFIX}/mesne-zajednice`, async (c) => {
       { id: 12, name: 'Palilula (Niš)', opstina: 'Palilula', grad: 'Niš', lat: 43.3100, lon: 21.8900, osm_id: 'm12' },
       { id: 13, name: 'Aerodrom', opstina: 'Aerodrom', grad: 'Kragujevac', lat: 44.0200, lon: 20.9200, osm_id: 'm13' },
       { id: 14, name: 'Stari Grad (Kragujevac)', opstina: 'Stari Grad', grad: 'Kragujevac', lat: 44.0100, lon: 20.9100, osm_id: 'm14' },
+      { id: 15, name: 'Centar', opstina: 'Pančevo', grad: 'Pančevo', lat: 44.8708, lon: 20.6403, osm_id: 'm15' },
+      { id: 16, name: 'Strelište', opstina: 'Pančevo', grad: 'Pančevo', lat: 44.8620, lon: 20.6550, osm_id: 'm16' },
+      { id: 17, name: 'Centar', opstina: 'Čačak', grad: 'Čačak', lat: 43.8914, lon: 20.3506, osm_id: 'm17' },
+      { id: 18, name: 'Centar', opstina: 'Kraljevo', grad: 'Kraljevo', lat: 43.7254, lon: 20.6893, osm_id: 'm18' },
+      { id: 19, name: 'Centar', opstina: 'Užice', grad: 'Užice', lat: 43.8556, lon: 19.8425, osm_id: 'm19' },
+      { id: 20, name: 'Centar', opstina: 'Subotica', grad: 'Subotica', lat: 46.1004, lon: 19.6676, osm_id: 'm20' },
+      { id: 21, name: 'Prozivka', opstina: 'Subotica', grad: 'Subotica', lat: 46.0900, lon: 19.6600, osm_id: 'm21' },
+      { id: 22, name: 'Centar', opstina: 'Zrenjanin', grad: 'Zrenjanin', lat: 45.3814, lon: 20.3862, osm_id: 'm22' },
+      { id: 23, name: 'Bagljaš', opstina: 'Zrenjanin', grad: 'Zrenjanin', lat: 45.3850, lon: 20.3700, osm_id: 'm23' },
+      { id: 24, name: 'Sremčica', opstina: 'Čukarica', grad: 'Beograd', lat: 44.6738, lon: 20.3924, osm_id: 'm24' },
+      { id: 25, name: 'Žarkovo', opstina: 'Čukarica', grad: 'Beograd', lat: 44.7578, lon: 20.4190, osm_id: 'm25' },
+      { id: 26, name: 'Batajnica', opstina: 'Zemun', grad: 'Beograd', lat: 44.9080, lon: 20.2760, osm_id: 'm26' },
+      { id: 27, name: 'Surčin', opstina: 'Surčin', grad: 'Beograd', lat: 44.7938, lon: 20.2800, osm_id: 'm27' },
+      { id: 28, name: 'Slavujev Potok', opstina: 'Zvezdara', grad: 'Beograd', lat: 44.8050, lon: 20.4950, osm_id: 'm28' },
+      { id: 29, name: 'Vuk Karadžić', opstina: 'Zvezdara', grad: 'Beograd', lat: 44.8030, lon: 20.4850, osm_id: 'm29' },
+      { id: 30, name: 'Mirijevo', opstina: 'Zvezdara', grad: 'Beograd', lat: 44.7960, lon: 20.5230, osm_id: 'm30' },
+      { id: 31, name: 'Lion', opstina: 'Zvezdara', grad: 'Beograd', lat: 44.7980, lon: 20.4980, osm_id: 'm31' },
     ];
 
-    // Try to get from KV first
-    let stored = await kv.get("mesne_zajednice");
-    
-    // If not found, seed it
-    if (!stored) {
-      await kv.set("mesne_zajednice", MOCK_DATA);
-      stored = MOCK_DATA;
-    }
+const getMesneZajednice = (c: any) => c.json(MOCK_DATA);
 
-    return c.json(stored);
-  } catch (err) {
-    return c.json({ error: 'Failed to fetch mesne zajednice' }, 500);
-  }
-});
+// Handle both full path and potentially stripped path
+app.get(`${API_PREFIX}/mesne-zajednice`, getMesneZajednice);
+app.get('/mesne-zajednice', getMesneZajednice);
 
 // Zbor Registration with File Upload
 app.post(`${API_PREFIX}/register-zbor`, async (c) => {

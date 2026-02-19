@@ -15,22 +15,22 @@ export default function Footer({ onNavigate, onRegister }: FooterProps) {
         {/* Logo and Links Section */}
         <div className="flex flex-col md:flex-row gap-10 md:gap-20">
           {/* Logo */}
-          <div className="shrink-0 cursor-pointer w-[180px]" onClick={() => onNavigate('home')}>
+          <div className="shrink-0 cursor-pointer w-[70px] h-[25px] md:w-[110px] md:h-[39px]" onClick={() => onNavigate('home')}>
              <ZborAppLogoT />
           </div>
 
           {/* About App Links */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-lg">О апликацији</h3>
-            <div className="flex flex-col gap-3 text-sm underline">
-              <button onClick={() => onNavigate('about')} className="text-left hover:text-primary-foreground/80">О нама</button>
-              <span className="text-primary-foreground/80 no-underline">Следећа верзија (Бета)</span>
-              <button onClick={onRegister} className="text-left hover:text-primary-foreground/80 font-bold">Региструј збор</button>
+            <h3 className="font-bold text-[16px]">О апликацији</h3>
+            <div className="flex flex-col gap-3">
+              <button onClick={() => onNavigate('about')} className="text-left hover:text-primary-foreground/80 font-normal text-[16px]">О нама</button>
+              <span className="text-primary-foreground font-normal text-[16px]">Следећа верзија (Бета)</span>
+              <button onClick={onRegister} className="text-left hover:text-primary-foreground/80 font-normal text-[16px]">Региструј збор</button>
               <a 
                 href="https://docs.google.com/forms/d/e/1FAIpQLSeGmJe4HKBhpqihb9FB8y9F_gLN_cLsRJCUpVa9I1AkH2dxiQ/viewform?usp=header"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-left hover:text-primary-foreground/80 text-yellow-300"
+                className="text-left hover:text-primary-foreground/80 font-normal text-[16px]"
               >
                 Попуни анкету
               </a>
@@ -39,17 +39,17 @@ export default function Footer({ onNavigate, onRegister }: FooterProps) {
 
           {/* Legal Links */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-lg">Правила и заштита података</h3>
-            <div className="flex flex-col gap-3 text-sm underline">
-              <button onClick={() => onNavigate('privacy')} className="text-left hover:text-primary-foreground/80">Политика приватности</button>
-              <span className="text-primary-foreground/80 no-underline">Управљање колачићима</span>
-              <button onClick={() => onNavigate('terms')} className="text-left hover:text-primary-foreground/80">Услови коришћења</button>
+            <h3 className="font-bold text-[16px]">Правила и заштита података</h3>
+            <div className="flex flex-col gap-3">
+              <button onClick={() => onNavigate('privacy')} className="text-left hover:text-primary-foreground/80 font-normal text-[16px]">Политика приватности</button>
+              <span className="text-primary-foreground font-normal text-[16px]">Управљање колачићима</span>
+              <button onClick={() => onNavigate('terms')} className="text-left hover:text-primary-foreground/80 font-normal text-[16px]">Услови коришћења</button>
             </div>
           </div>
 
           {/* Social Links */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-bold text-lg">Останимо у контакту</h3>
+            <h3 className="font-bold text-[16px]">Останимо у контакту</h3>
             <div className="flex gap-4 items-center">
                <a href="#" className="hover:opacity-80 transition-opacity"><Facebook size={24} /></a>
                <a href="#" className="hover:opacity-80 transition-opacity"><Twitter size={24} /></a>

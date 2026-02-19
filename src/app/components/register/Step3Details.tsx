@@ -16,17 +16,17 @@ export function Step3Details({ formData, updateFormData, onSubmit, onBack, loadi
       <div className="flex-1 overflow-y-auto pr-1">
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-primary uppercase mb-1.5 ml-1">{t('Кратак опис збора')}</label>
+            <label className="block text-xs font-bold text-foreground uppercase mb-1.5 ml-1">{t('Кратак опис збора')}</label>
             <textarea
               value={formData.description}
               onChange={(e) => updateFormData({ description: e.target.value })}
-              className="w-full bg-card border-none rounded-xl py-3 px-4 text-sm min-h-[120px] focus:ring-2 focus:ring-primary/20 resize-none text-foreground"
+              className="w-full bg-card border border-border rounded-xl py-3 px-4 text-sm min-h-[120px] focus:ring-2 focus:ring-primary/20 resize-none text-foreground placeholder:text-muted-foreground"
               placeholder={t('Опишите ваш збор...')}
             />
           </div>
           {/* Logo upload could go here */}
           <div>
-            <label className="block text-xs font-bold text-primary uppercase mb-1.5 ml-1">{t('Лого збора (опционо)')}</label>
+            <label className="block text-xs font-bold text-foreground uppercase mb-1.5 ml-1">{t('Лого збора (опционо)')}</label>
             <div className="relative">
               <input
                 type="file"

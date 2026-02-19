@@ -65,7 +65,7 @@ export function UserFeedbackModal({ isOpen, onClose, t }: UserFeedbackModalProps
   // 1. Question View (Da / Ne)
   if (step === 'question') {
     return (
-      <div className="fixed bottom-24 right-4 z-[70] animate-in slide-in-from-bottom-10 duration-500">
+      <div className="fixed bottom-24 right-4 z-[1500] animate-in slide-in-from-bottom-10 duration-500">
         <div className="bg-background flex flex-col items-start overflow-hidden py-[24px] relative rounded-[8px] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.12),0px_4px_8px_0px_rgba(0,0,0,0.16),0px_12px_24px_0px_rgba(0,0,0,0.16)] w-[332px]">
           
           {/* Header */}
@@ -103,7 +103,7 @@ export function UserFeedbackModal({ isOpen, onClose, t }: UserFeedbackModalProps
                    <div className="relative size-[40px]">
                       <svg className="absolute block inset-0" fill="none" viewBox="0 0 40 40">
                          <g transform="scale(1, -1) translate(0, -40)"> 
-                             <path clipRule="evenodd" d={svgPathsYes.p1dc24500} fill="currentColor" fillRule="evenodd" />
+                             <path clipRule="evenodd" d={svgPathsYes.p37190900} fill="currentColor" fillRule="evenodd" />
                          </g>
                       </svg>
                    </div>
@@ -125,7 +125,7 @@ export function UserFeedbackModal({ isOpen, onClose, t }: UserFeedbackModalProps
   }
 
   return (
-    <div className="fixed bottom-24 right-4 z-[70] animate-in slide-in-from-bottom-10 duration-500 w-[332px]">
+    <div className="fixed bottom-24 right-4 z-[1500] animate-in slide-in-from-bottom-10 duration-500 w-[332px]">
         {step === 'question' && (
             <div className="bg-background flex flex-col items-start overflow-hidden py-[24px] relative rounded-[8px] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.12),0px_4px_8px_0px_rgba(0,0,0,0.16),0px_12px_24px_0px_rgba(0,0,0,0.16)] w-full">
                 <div className="flex flex-col items-start relative shrink-0 w-full">

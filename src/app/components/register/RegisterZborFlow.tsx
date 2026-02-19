@@ -75,7 +75,7 @@ export function RegisterZborFlow({ isOpen, onClose, t }: RegisterZborFlowProps) 
 
   if (isSuccess) {
     return (
-      <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-6 backdrop-blur-sm">
+      <div className="fixed inset-0 bg-black/60 z-[2000] flex items-center justify-center p-6 backdrop-blur-sm">
         <div className="bg-background rounded-2xl w-full max-w-lg h-[600px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
             <div className="p-6 pb-2 border-b border-accent flex justify-end">
                 <button onClick={onClose} className="p-2 hover:bg-card rounded-full transition-colors">
@@ -95,7 +95,7 @@ export function RegisterZborFlow({ isOpen, onClose, t }: RegisterZborFlowProps) 
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-6 backdrop-blur-sm">
+    <div className="fixed inset-0 bg-black/60 z-[2000] flex items-center justify-center p-6 backdrop-blur-sm">
       <div className="bg-background rounded-2xl w-full max-w-lg h-[600px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
         {/* Header */}
         <div className="p-6 pb-2 border-b border-accent">
