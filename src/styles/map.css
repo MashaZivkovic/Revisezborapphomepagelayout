@@ -1,0 +1,43 @@
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+}
+
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  width: 30px;
+  height: 30px;
+  margin-left: 5px;
+  margin-top: 5px;
+  text-align: center;
+  border-radius: 50%;
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Zbor Cluster (Purple) */
+.cluster-zbor div {
+  background-color: #6B21A8;
+  border: 2px solid white;
+}
+
+/* Event Cluster (Yellow) */
+.cluster-event div {
+  background-color: #EAB308;
+  border: 2px solid white;
+}
+
+/* Protest Cluster (Red) */
+.cluster-protest div {
+  background-color: #EF4444;
+  border: 2px solid white;
+}

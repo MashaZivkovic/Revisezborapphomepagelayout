@@ -1,0 +1,274 @@
+import svgPaths from "./svg-y7s9z8dzye";
+
+function HeadingContainer() {
+  return (
+    <div className="content-stretch flex gap-[4px] items-center relative shrink-0" data-name="Heading container">
+      <div className="content-stretch flex items-start relative shrink-0" data-name="Heading">
+        <p className="font-['Noto_Sans:Display_Regular',sans-serif] font-normal leading-[40px] relative shrink-0 text-[#333] text-[20px]" style={{ fontVariationSettings: "\'CTGR\' 100, \'wdth\' 100" }}>
+          Зашто нисте успели да
+          <br aria-hidden="true" />
+          нађете то што сте желели?
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Left() {
+  return (
+    <div className="content-stretch flex flex-[1_0_0] flex-col gap-[4px] items-start min-h-px min-w-px relative" data-name="Left">
+      <HeadingContainer />
+    </div>
+  );
+}
+
+function Container() {
+  return (
+    <div className="relative shrink-0 w-full" data-name="Container">
+      <div className="content-stretch flex items-start justify-between px-[24px] relative w-full">
+        <Left />
+        <button className="block cursor-pointer overflow-clip relative shrink-0 size-[24px]" data-name="XMarkIcon">
+          <div className="absolute inset-[21.95%_21.8%_21.8%_21.8%]" data-name="Vector">
+            <svg className="absolute block inset-0" fill="none" preserveAspectRatio="none" viewBox="0 0 13.5374 13.5">
+              <path clipRule="evenodd" d={svgPaths.p339b6700} fill="var(--fill-0, #4F378A)" fillRule="evenodd" id="Vector" />
+            </svg>
+          </div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Divider() {
+  return (
+    <div className="h-[24px] relative shrink-0 w-full" data-name="Divider">
+      <svg className="absolute block inset-0" fill="none" preserveAspectRatio="none" viewBox="0 0 332 24">
+        <g id="Divider">
+          <rect fill="white" height="24" width="332" />
+          <line id="divider line" stroke="var(--stroke-0, #B3ACC5)" x2="332" y1="11.5" y2="11.5" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+function Checkbox() {
+  return (
+    <div className="content-stretch flex gap-[8px] items-center relative shrink-0" data-name="Checkbox">
+      <div className="bg-white relative rounded-[4px] shrink-0 size-[24px]" data-name=".Checkbox Icon">
+        <div aria-hidden="true" className="absolute border-2 border-[#4f378a] border-solid inset-0 pointer-events-none rounded-[4px]" />
+      </div>
+      <p className="font-['Noto_Sans:Display_Regular',sans-serif] font-normal leading-[20px] relative shrink-0 text-[#333] text-[16px]" style={{ fontVariationSettings: "\'CTGR\' 100, \'wdth\' 100" }}>
+        Информација не постоји
+      </p>
+    </div>
+  );
+}
+
+function Frame() {
+  return (
+    <div className="content-stretch flex flex-col items-start px-[24px] relative shrink-0">
+      <div className="content-stretch flex flex-col items-start justify-center relative shrink-0" data-name="Checkbox Item">
+        <Checkbox />
+      </div>
+    </div>
+  );
+}
+
+function Checkbox1() {
+  return (
+    <div className="content-stretch flex gap-[8px] items-center relative shrink-0" data-name="Checkbox">
+      <div className="bg-white relative rounded-[4px] shrink-0 size-[24px]" data-name=".Checkbox Icon">
+        <div aria-hidden="true" className="absolute border-2 border-[#4f378a] border-solid inset-0 pointer-events-none rounded-[4px]" />
+      </div>
+      <p className="font-['Noto_Sans:Display_Regular',sans-serif] font-normal leading-[20px] relative shrink-0 text-[#333] text-[16px]" style={{ fontVariationSettings: "\'CTGR\' 100, \'wdth\' 100" }}>
+        Навигација је лоша
+      </p>
+    </div>
+  );
+}
+
+function Frame1() {
+  return (
+    <div className="content-stretch flex flex-col items-start px-[24px] relative shrink-0">
+      <div className="content-stretch flex flex-col items-start justify-center relative shrink-0" data-name="Checkbox Item">
+        <Checkbox1 />
+      </div>
+    </div>
+  );
+}
+
+function Checkbox2() {
+  return (
+    <div className="content-stretch flex gap-[8px] items-center relative shrink-0" data-name="Checkbox">
+      <div className="bg-white relative rounded-[4px] shrink-0 size-[24px]" data-name=".Checkbox Icon">
+        <div aria-hidden="true" className="absolute border-2 border-[#4f378a] border-solid inset-0 pointer-events-none rounded-[4px]" />
+      </div>
+      <p className="font-['Noto_Sans:Display_Regular',sans-serif] font-normal leading-[20px] relative shrink-0 text-[#333] text-[16px]" style={{ fontVariationSettings: "\'CTGR\' 100, \'wdth\' 100" }}>
+        Не разумем информацију
+      </p>
+    </div>
+  );
+}
+
+function Frame4() {
+  return (
+    <div className="content-stretch flex flex-col items-start px-[24px] relative shrink-0">
+      <div className="content-stretch flex flex-col items-start justify-center relative shrink-0" data-name="Checkbox Item">
+        <Checkbox2 />
+      </div>
+    </div>
+  );
+}
+
+function Checkbox3() {
+  return (
+    <div className="content-stretch flex gap-[8px] items-start relative shrink-0" data-name="Checkbox">
+      <div className="bg-white relative rounded-[4px] shrink-0 size-[24px]" data-name=".Checkbox Icon">
+        <div aria-hidden="true" className="absolute border-2 border-[#4f378a] border-solid inset-0 pointer-events-none rounded-[4px]" />
+      </div>
+      <div className="font-['Noto_Sans:Display_Regular',sans-serif] font-normal leading-[20px] relative shrink-0 text-[#333] text-[16px] whitespace-nowrap" style={{ fontVariationSettings: "\'CTGR\' 100, \'wdth\' 100" }}>
+        <p className="mb-0">{`Страница није прилоагођена `}</p>
+        <p>{`мојим посебним потребама `}</p>
+      </div>
+    </div>
+  );
+}
+
+function Frame5() {
+  return (
+    <div className="h-[40px] relative shrink-0 w-[302px]">
+      <div className="-translate-y-1/2 absolute content-stretch flex flex-col items-start left-[24px] top-1/2" data-name="Checkbox Item">
+        <Checkbox3 />
+      </div>
+    </div>
+  );
+}
+
+function Checkbox4() {
+  return (
+    <div className="content-stretch flex gap-[8px] items-center relative shrink-0" data-name="Checkbox">
+      <div className="bg-white relative rounded-[4px] shrink-0 size-[24px]" data-name=".Checkbox Icon">
+        <div aria-hidden="true" className="absolute border-2 border-[#4f378a] border-solid inset-0 pointer-events-none rounded-[4px]" />
+      </div>
+      <p className="font-['Noto_Sans:Display_Regular',sans-serif] font-normal leading-[20px] relative shrink-0 text-[#333] text-[16px]" style={{ fontVariationSettings: "\'CTGR\' 100, \'wdth\' 100" }}>
+        Нешто није радило како треба
+      </p>
+    </div>
+  );
+}
+
+function Frame6() {
+  return (
+    <div className="content-stretch flex flex-col items-start px-[24px] relative shrink-0">
+      <div className="content-stretch flex flex-col items-start justify-center relative shrink-0" data-name="Checkbox Item">
+        <Checkbox4 />
+      </div>
+    </div>
+  );
+}
+
+function Checkbox5() {
+  return (
+    <div className="content-stretch flex gap-[8px] items-center relative shrink-0" data-name="Checkbox">
+      <div className="bg-white relative rounded-[4px] shrink-0 size-[24px]" data-name=".Checkbox Icon">
+        <div aria-hidden="true" className="absolute border-2 border-[#4f378a] border-solid inset-0 pointer-events-none rounded-[4px]" />
+      </div>
+      <p className="font-['Noto_Sans:Display_Regular',sans-serif] font-normal leading-[20px] relative shrink-0 text-[#333] text-[16px]" style={{ fontVariationSettings: "\'CTGR\' 100, \'wdth\' 100" }}>
+        Друго
+      </p>
+    </div>
+  );
+}
+
+function Frame7() {
+  return (
+    <div className="content-stretch flex flex-col items-start px-[24px] relative shrink-0">
+      <div className="content-stretch flex flex-col items-start justify-center relative shrink-0" data-name="Checkbox Item">
+        <Checkbox5 />
+      </div>
+    </div>
+  );
+}
+
+function Frame3() {
+  return (
+    <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0">
+      <Frame />
+      <Frame1 />
+      <Frame4 />
+      <Frame5 />
+      <Frame6 />
+      <Frame7 />
+    </div>
+  );
+}
+
+function Frame2() {
+  return (
+    <div className="content-stretch flex flex-col items-start pb-[16px] pt-[4px] relative shrink-0">
+      <Frame3 />
+    </div>
+  );
+}
+
+function Divider1() {
+  return (
+    <div className="h-[24px] relative shrink-0 w-full" data-name="Divider">
+      <svg className="absolute block inset-0" fill="none" preserveAspectRatio="none" viewBox="0 0 332 24">
+        <g id="Divider">
+          <rect fill="white" height="24" width="332" />
+          <line id="divider line" stroke="var(--stroke-0, #B3ACC5)" x2="332" y1="11.5" y2="11.5" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+function ButtonContent() {
+  return (
+    <div className="content-stretch flex gap-[4px] items-center relative shrink-0" data-name="Button content">
+      <p className="font-['Noto_Sans:Bold',sans-serif] font-bold leading-[24px] relative shrink-0 text-[16px] text-white tracking-[0.5px]" style={{ fontVariationSettings: "\'CTGR\' 0, \'wdth\' 100" }}>
+        Потврди
+      </p>
+    </div>
+  );
+}
+
+function Section() {
+  return (
+    <div className="relative shrink-0 w-full" data-name="Section">
+      <div className="content-stretch flex flex-col items-start pt-[12px] px-[24px] relative w-full">
+        <div className="bg-[#4f378a] relative rounded-[4px] shrink-0 w-full" data-name="Button">
+          <div className="flex flex-row justify-center size-full">
+            <div className="content-stretch flex items-start justify-center px-[24px] py-[12px] relative w-full">
+              <ButtonContent />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Footer() {
+  return (
+    <div className="bg-white content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-full" data-name="_Footer">
+      <Divider1 />
+      <Section />
+    </div>
+  );
+}
+
+export default function ModalOkOrisnickomIskustvu() {
+  return (
+    <div className="bg-[#fffcfd] content-stretch flex flex-col items-start overflow-clip py-[24px] relative rounded-[8px] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.12),0px_4px_8px_0px_rgba(0,0,0,0.16),0px_12px_24px_0px_rgba(0,0,0,0.16)] size-full" data-name="ModalOKOrisnickomIskustvu/Зашто нисте успели да  пронађете то што сте желели">
+      <div className="content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-full" data-name="_Header">
+        <Container />
+        <Divider />
+      </div>
+      <Frame2 />
+      <Footer />
+    </div>
+  );
+}

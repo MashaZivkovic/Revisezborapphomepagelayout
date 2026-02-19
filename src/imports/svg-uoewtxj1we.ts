@@ -1,0 +1,19 @@
+export default {
+  p1c474f00: "M0 0h10v10H0z",
+  p2362900: "M0 0h10v10H0z",
+  p8dc8c00: "M0 0h10v10H0z",
+  p2ff691b0: "M0 0h10v10H0z",
+  p10d2a700: "M0 0h10v10H0z",
+  p2469b1f2: "M0 0h10v10H0z",
+  p259ef220: "M0 0h10v10H0z",
+  p7c10f00: "M0 0h10v10H0z",
+  p1cefb400: "M0 0h10v10H0z",
+  p23e17440: "M0 0h10v10H0z",
+  p339b6700: "M0 0h10v10H0z",
+  p37190900: "M0 0h10v10H0z",
+  p3836d180: "M0 0h10v10H0z",
+  p11499b80: "M0 0h10v10H0z",
+  pf80f580: "M0 0h10v10H0z",
+  p44a100: "M0 0h10v10H0z",
+  p1ee88d80: "M0 0h10v10H0z"
+};
