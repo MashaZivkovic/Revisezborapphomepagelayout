@@ -145,16 +145,16 @@ export function SearchFilterBar({
   };
 
   return (
-    <div className="bg-card rounded-xl shadow-sm border border-border mb-6 p-4">
+    <div className="bg-card rounded-xl shadow-sm border border-border mb-3 p-3">
       {/* Search Input */}
-      <div className="relative mb-4">
-        <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-primary text-xl" />
+      <div className="relative mb-2">
+        <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-primary text-lg" />
         <input
           type="text"
           placeholder={t('Претражи зборове, догађаје...')}
           value={filters.query}
           onChange={(e) => handleFilterChange('query', e.target.value)}
-          className="w-full pl-10 pr-4 py-3 bg-muted/30 border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-foreground/40 font-medium"
+          className="w-full pl-9 pr-4 py-2 bg-muted/30 border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-foreground placeholder:text-foreground/40 font-medium text-sm"
         />
       </div>
 
@@ -164,7 +164,7 @@ export function SearchFilterBar({
           {/* Filter Button */}
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg font-bold text-sm transition-colors border ${isExpanded || activeFiltersCount > 0 ? 'bg-accent border-accent text-primary' : 'bg-card border-border text-foreground/70 hover:bg-muted/50'}`}
+            className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-bold text-xs transition-colors border ${isExpanded || activeFiltersCount > 0 ? 'bg-accent border-accent text-primary' : 'bg-card border-border text-foreground/70 hover:bg-muted/50'}`}
           >
             <FunnelIcon className="text-lg text-primary" />
             <span className="hidden sm:inline">{t('Филтери')}</span>
@@ -179,7 +179,7 @@ export function SearchFilterBar({
           <div className="relative">
             <button 
               onClick={() => setIsSortExpanded(!isSortExpanded)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg font-bold text-sm transition-colors border bg-card border-border text-foreground/70 hover:bg-muted/50"
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg font-bold text-xs transition-colors border bg-card border-border text-foreground/70 hover:bg-muted/50"
             >
               <ArrowDownIcon className="text-lg text-primary" />
               <span className="hidden sm:inline">{getSortLabel(filters.sort)}</span>

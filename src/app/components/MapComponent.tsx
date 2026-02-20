@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import '../../styles/map.css';
 import L from 'leaflet';
 import { ZborData, PostData } from './Cards';
+import { ImageWithFallback } from './figma/ImageWithFallback';
 
 // Fix for default marker icon in React Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -59,28 +60,25 @@ interface MapComponentProps {
   language: 'cir' | 'lat';
 }
 
-const MapLegend = ({ language }: { language: 'cir' | 'lat' }) => {
+export const MapLegend = ({ language }: { language: 'cir' | 'lat' }) => {
   const isLat = language === 'lat';
   const t = (txt: string) => isLat ? cyrToLat(txt) : txt;
 
   return (
-    <div className="absolute bottom-8 left-4 z-[1000] bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg border border-gray-200 animate-in fade-in duration-300">
-      <h4 className="text-xs font-bold mb-2 text-foreground uppercase tracking-wide">{t('Легенда')}</h4>
-      <div className="space-y-2.5">
-        <div className="flex items-center gap-2.5">
-          <div className="w-5 h-5 rounded-full bg-primary border-2 border-white/50 shadow-sm flex items-center justify-center relative">
-             <div className="absolute inset-0 rounded-full border border-primary opacity-30 animate-pulse"></div>
-          </div>
-          <span className="text-xs font-medium text-foreground">{t('Збор')}</span>
+    <div className="bg-background border-t border-border px-4 py-2 flex flex-wrap items-center justify-center gap-4 sm:gap-6 shrink-0 z-[400] shadow-[0_-4px_10px_-4px_rgba(0,0,0,0.1)]">
+      <div className="flex items-center gap-2">
+        <div className="w-3.5 h-3.5 rounded-full bg-primary border border-white/50 shadow-sm relative">
+           <div className="absolute inset-0 rounded-full border border-primary opacity-30 animate-pulse"></div>
         </div>
-        <div className="flex items-center gap-2.5">
-          <div className="w-5 h-5 rounded-full bg-[#EAB308] border-2 border-white shadow-sm"></div>
-          <span className="text-xs font-medium text-foreground">{t('Догађај')}</span>
-        </div>
-        <div className="flex items-center gap-2.5">
-          <div className="w-5 h-5 rounded-full bg-[#EF4444] border-2 border-white shadow-sm"></div>
-          <span className="text-xs font-medium text-foreground">{t('Протест')}</span>
-        </div>
+        <span className="text-xs font-bold text-foreground">{t('Збор')}</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="w-3.5 h-3.5 rounded-full bg-[#EAB308] border border-white shadow-sm"></div>
+        <span className="text-xs font-bold text-foreground">{t('Догађај')}</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="w-3.5 h-3.5 rounded-full bg-[#EF4444] border border-white shadow-sm"></div>
+        <span className="text-xs font-bold text-foreground">{t('Протест')}</span>
       </div>
     </div>
   );
@@ -140,11 +138,12 @@ export default function MapComponent({ zborovi, posts, onZborClick, onPostClick,
   // Use OpenStreetMap standard tiles which display local names (Cyrillic in Serbia).
   const tileUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
+  const isLat = language === 'lat';
+  const t = (txt: string) => isLat ? cyrToLat(txt) : txt;
+
   return (
     <div className="h-full w-full relative z-0 font-['Noto_Sans']">
-      <MapLegend language={language} />
-      
-      <MapContainer 
+        <MapContainer 
         center={[44.7866, 20.4489]} 
         zoom={13} 
         style={{ height: '100%', width: '100%' }}
@@ -176,12 +175,27 @@ export default function MapComponent({ zborovi, posts, onZborClick, onPostClick,
               key={`zbor-${zbor.id}`} 
               position={getMockCoords(zbor.id, zbor.location)} 
               icon={zborIcon}
-              eventHandlers={{ click: () => onZborClick(zbor) }}
             >
               <Popup>
-                <div className="font-['Noto_Sans']">
-                  <h3 className="font-bold text-sm mb-1">{zbor.name}</h3>
-                  <p className="text-xs text-gray-600">{zbor.location}</p>
+                <div className="w-[200px] font-['Noto_Sans']">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="size-8 rounded-full overflow-hidden flex-shrink-0 bg-accent border border-muted relative">
+                      <ImageWithFallback src={zbor.avatar} alt={zbor.name} className="absolute inset-0 size-full object-cover" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-bold text-foreground leading-tight truncate">{t(zbor.name)}</h3>
+                      <p className="text-[10px] text-muted-foreground truncate">{t(zbor.location)}</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-foreground/80 line-clamp-2 mb-3 leading-relaxed">
+                    {t(zbor.description)}
+                  </p>
+                  <button 
+                    onClick={() => onZborClick(zbor)}
+                    className="w-full text-center text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 py-1.5 rounded transition-colors uppercase tracking-wide"
+                  >
+                    {t('Види више')} -&gt;
+                  </button>
                 </div>
               </Popup>
             </Marker>
@@ -206,13 +220,25 @@ export default function MapComponent({ zborovi, posts, onZborClick, onPostClick,
                 key={`post-${post.id}`} 
                 position={getMockCoords(post.id, post.eventInfo?.location || '')} 
                 icon={eventIcon}
-                eventHandlers={{ click: () => onPostClick(post) }}
               >
                  <Popup>
-                  <div className="font-['Noto_Sans']">
-                    <h3 className="font-bold text-sm mb-1">{post.title}</h3>
-                    <p className="text-xs text-gray-600">{post.eventInfo?.location}</p>
-                    <p className="text-xs text-gray-600">{post.eventInfo?.startTime}</p>
+                  <div className="w-[200px] font-['Noto_Sans']">
+                    {post.image && (
+                      <div className="aspect-video w-full rounded-md overflow-hidden mb-2 relative border border-border">
+                         <ImageWithFallback src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <h3 className="text-sm font-bold text-foreground leading-tight mb-1 line-clamp-2">{t(post.title)}</h3>
+                    <div className="flex flex-col gap-0.5 mb-3">
+                       <span className="text-[10px] text-muted-foreground font-medium truncate">{t(post.eventInfo?.location || '')}</span>
+                       <span className="text-[10px] text-primary font-bold">{t(post.eventInfo?.startTime || '')}</span>
+                    </div>
+                    <button 
+                      onClick={() => onPostClick(post)}
+                      className="w-full text-center text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 py-1.5 rounded transition-colors uppercase tracking-wide"
+                    >
+                      {t('Види више')} -&gt;
+                    </button>
                   </div>
                 </Popup>
               </Marker>
@@ -235,13 +261,25 @@ export default function MapComponent({ zborovi, posts, onZborClick, onPostClick,
                 key={`post-${post.id}`} 
                 position={getMockCoords(post.id, post.eventInfo?.location || '')} 
                 icon={protestIcon}
-                eventHandlers={{ click: () => onPostClick(post) }}
               >
                  <Popup>
-                  <div className="font-['Noto_Sans']">
-                    <h3 className="font-bold text-sm mb-1">{post.title}</h3>
-                    <p className="text-xs text-gray-600">{post.eventInfo?.location}</p>
-                    <p className="text-xs text-gray-600">{post.eventInfo?.startTime}</p>
+                  <div className="w-[200px] font-['Noto_Sans']">
+                    {post.image && (
+                      <div className="aspect-video w-full rounded-md overflow-hidden mb-2 relative border border-border">
+                         <ImageWithFallback src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <h3 className="text-sm font-bold text-destructive leading-tight mb-1 line-clamp-2">{t(post.title)}</h3>
+                    <div className="flex flex-col gap-0.5 mb-3">
+                       <span className="text-[10px] text-muted-foreground font-medium truncate">{t(post.eventInfo?.location || '')}</span>
+                       <span className="text-[10px] text-destructive font-bold">{t(post.eventInfo?.startTime || '')}</span>
+                    </div>
+                    <button 
+                      onClick={() => onPostClick(post)}
+                      className="w-full text-center text-xs font-bold text-destructive bg-destructive/10 hover:bg-destructive/20 py-1.5 rounded transition-colors uppercase tracking-wide"
+                    >
+                      {t('Види више')} -&gt;
+                    </button>
                   </div>
                 </Popup>
               </Marker>

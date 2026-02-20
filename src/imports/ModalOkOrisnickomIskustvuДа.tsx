@@ -1,6 +1,6 @@
 import svgPaths from "./svg-njnd2c6hiv";
 
-export default function ModalOkOrisnickomIskustvu() {
+export default function ModalOkOrisnickomIskustvu({ onClose, onConfirm }: { onClose?: () => void, onConfirm?: () => void }) {
   return (
     <div className="bg-[#fffcfd] content-stretch flex flex-col items-start overflow-clip py-[24px] relative rounded-[8px] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.12),0px_4px_8px_0px_rgba(0,0,0,0.16),0px_12px_24px_0px_rgba(0,0,0,0.16)] size-full" data-name="ModalOKOrisnickomIskustvu/Да">
       <div className="content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-full" data-name="_Header">
@@ -16,7 +16,7 @@ export default function ModalOkOrisnickomIskustvu() {
                 </div>
               </div>
             </div>
-            <button className="block cursor-pointer overflow-clip relative shrink-0 size-[24px]" data-name="XMarkIcon">
+            <button onClick={onClose} className="block cursor-pointer overflow-clip relative shrink-0 size-[24px]" data-name="XMarkIcon">
               <div className="absolute inset-[21.95%_21.8%_21.8%_21.8%]" data-name="Vector">
                 <svg className="absolute block inset-0" fill="none" preserveAspectRatio="none" viewBox="0 0 13.5374 13.5">
                   <path clipRule="evenodd" d={svgPaths.p339b6700} fill="var(--fill-0, #4F378A)" fillRule="evenodd" id="Vector" />
@@ -66,7 +66,7 @@ export default function ModalOkOrisnickomIskustvu() {
       </div>
       <div className="relative shrink-0 w-full" data-name="Section">
         <div className="content-stretch flex flex-col items-start pt-[12px] px-[24px] relative w-full">
-          <div className="bg-[#4f378a] relative rounded-[4px] shrink-0 w-full" data-name="Button">
+          <button onClick={onConfirm} className="bg-[#4f378a] relative rounded-[4px] shrink-0 w-full" data-name="Button">
             <div className="flex flex-row justify-center size-full">
               <div className="content-stretch flex items-start justify-center px-[24px] py-[12px] relative w-full">
                 <div className="content-stretch flex gap-[4px] items-center relative shrink-0" data-name="Button content">
@@ -76,7 +76,7 @@ export default function ModalOkOrisnickomIskustvu() {
                 </div>
               </div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
     </div>

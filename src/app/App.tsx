@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import '../styles/index.css';
 import { 
-  HouseIcon, BellIcon, PersonIcon, MagnifyingGlassIcon, PinIcon, LocationPinIcon, MenuGridIcon, TasklistIcon, 
-  CalendarIcon, MegaphoneIcon, ChevronLeftIcon, PaperplaneIcon, ExternalLinkIcon, XMarkIcon, 
-  ThumbUpIcon, ThumbDownIcon, ChatIcon, PlusIcon, ChevronDownIcon, CompassIcon, 
-  CheckmarkIcon, MenuElipsisVerticalIcon, LeaveIcon, CogIcon, QuestionmarkIcon, CheckmarkCircleIcon,
-  SunIcon, MoonIcon
+  BellIcon, PinIcon, MagnifyingGlassIcon, XMarkIcon, 
+  MenuElipsisVerticalIcon, ChevronLeftIcon, ChatIcon, MenuGridIcon, LocationPinIcon, MoonIcon, SunIcon
 } from '@navikt/aksel-icons';
-import { PostCard, ZborCard, PostData, ZborData, PostType, cyrToLat } from './components/Cards';
+import { PostCard, PostData, ZborData, cyrToLat } from './components/Cards';
 import { SearchFilterBar, FilterState } from './components/SearchFilterBar';
 import { CalendarView } from './components/CalendarView';
 import { isSameDay, addDays, isWithinInterval, parseISO, startOfDay, subHours } from 'date-fns';
@@ -17,13 +15,12 @@ import Footer from '../imports/Footer';
 import Onama from '../imports/Onama';
 import PolitikaPrivatnosti from '../imports/PolitikaPrivatnosti';
 import UsloviKoriscenja from '../imports/UsloviKoriscenja';
-import ZborAppLogoT1 from '../imports/ZborAppLogoT1';
-import ZborAppLogoT2 from '../imports/ZborAppLogoT2';
 import ShareIcon from '../imports/ShareIcon';
+import ZborAppLogoT1 from '../imports/ZborAppLogoT1';
+import ZborDetailPage from '../imports/Објава'; // Imported from library
 import { toast } from 'sonner';
 import { supabase } from '/src/lib/supabase';
 import { projectId } from '/utils/supabase/info';
-import * as kv from '/supabase/functions/server/kv_store';
 
 import { ProfileView } from './components/ProfileView';
 import MapComponent from './components/MapComponent';
@@ -147,7 +144,7 @@ const MOCK_NOTIFICATIONS: NotificationData[] = [
   {
     id: 'n2',
     type: 'post',
-    title: 'Нова обј��ва: Збор Врачар',
+    title: 'Нова објва: Збор Врачар',
     message: 'Објављен је извештај са акције чишћења Чубурског парка.',
     timestamp: 'пре 2 сата',
     isRead: false,
@@ -166,7 +163,7 @@ const MOCK_NOTIFICATIONS: NotificationData[] = [
   }
 ];
 
-function AuthModal({ isOpen, onClose, t }: { isOpen: boolean, onClose: () => void, t: (s: string) => string }) {
+function AuthModal({ isOpen, onClose, t, onLogin }: { isOpen: boolean, onClose: () => void, t: (s: string) => string, onLogin?: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -177,7 +174,7 @@ function AuthModal({ isOpen, onClose, t }: { isOpen: boolean, onClose: () => voi
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       toast.success(t('Успешно сте се пријавили!'));
-      onClose();
+      if (onLogin) onLogin(); else onClose();
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -332,110 +329,8 @@ function NotificationsView({
   );
 }
 
-function ZborDetailPage({ 
-  zbor, 
-  posts,
-  onBack, 
-  onAuthRequired, 
-  isFollowed, 
-  onToggleFollow, 
-  language,
-  showDistance
-}: { 
-  zbor: ZborData, 
-  posts: PostData[],
-  onBack: () => void, 
-  onAuthRequired: () => void,
-  isFollowed: boolean,
-  onToggleFollow: (id: string) => void,
-  language: 'cir' | 'lat',
-  showDistance: boolean
-}) {
-  const [activeTab, setActiveTab] = useState<'objave' | 'dogadjaji'>('objave');
-  const isLat = language === 'lat';
-  const t = (txt: string) => isLat ? cyrToLat(txt) : txt;
-  
-  const filteredPosts = posts.filter(p => p.zbor.id === zbor.id && (activeTab === 'objave' ? p.type === 'objava' : (p.type === 'dogadjaj' || p.type === 'protestna_setnja')));
-
-  return (
-    <div className="flex flex-col min-h-full bg-background">
-      <div className="bg-background border-b border-accent sticky top-0 z-30 px-4 py-4 flex items-center justify-between">
-        <button onClick={onBack} className="flex items-center gap-1 text-primary font-bold">
-          <ChevronLeftIcon className="text-[20px]" />
-          <span>{t('Назад')}</span>
-        </button>
-        <button className="text-primary">
-          <MagnifyingGlassIcon className="text-[22px]" />
-        </button>
-      </div>
-
-      <div className="px-4 py-6 max-w-4xl mx-auto w-full">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="size-20 lg:size-24 rounded-full overflow-hidden border-2 border-accent shadow-sm">
-            <ImageWithFallback src={zbor.avatar} alt={zbor.name} className="size-full object-cover" />
-          </div>
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-foreground leading-tight">{t(zbor.name)}</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <PinIcon className="text-[14px] text-primary" />
-              <span className="text-sm text-foreground/70 font-medium">{t(zbor.location)}</span>
-              {showDistance && zbor.distance !== undefined && (
-                <span className="text-[10px] font-bold text-chart-2 bg-chart-2/10 px-1.5 py-0.5 rounded ml-1 inline-block">
-                  {zbor.distance} km {t('од вас')}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex gap-4 mb-6">
-           <div className="size-[22px] cursor-pointer hover:opacity-80 text-primary">
-              <ShareIcon />
-           </div>
-           <ChatIcon className="text-[22px] text-primary cursor-pointer hover:opacity-80" />
-        </div>
-
-        <p className="text-sm lg:text-base text-foreground leading-relaxed mb-6 max-w-2xl">
-           {t(zbor.description)}
-        </p>
-
-        <div className="flex flex-wrap gap-3 mb-8">
-           <button 
-             onClick={() => onToggleFollow(zbor.id)} 
-             className={`px-8 py-3.5 rounded-lg font-bold shadow-md transition-all ${isFollowed ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-primary text-primary-foreground shadow-primary/20 hover:bg-primary/90'}`}
-           >
-              {isFollowed ? t('Откажи праћење') : t('Запрати збор')}
-           </button>
-           <button className="px-8 py-3.5 border-2 border-primary text-primary rounded-lg font-bold hover:bg-accent transition-colors">
-              {t('Подели страницу')}
-           </button>
-        </div>
-
-        <div className="flex border-b border-border mb-6">
-           <button onClick={() => setActiveTab('objave')} className={`px-8 py-3 font-bold text-sm transition-all border-b-2 ${activeTab === 'objave' ? 'border-primary text-primary' : 'border-transparent text-foreground/70'}`}>{t('Објаве')}</button>
-           <button onClick={() => setActiveTab('dogadjaji')} className={`px-8 py-3 font-bold text-sm transition-all border-b-2 ${activeTab === 'dogadjaji' ? 'border-primary text-primary' : 'border-transparent text-foreground/70'}`}>{t('Догађаји')}</button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6 pb-20 lg:pb-10">
-           {filteredPosts.map(post => (
-             <PostCard 
-               key={post.id} 
-               post={post} 
-               onAuthRequired={onAuthRequired} 
-               isFollowed={isFollowed}
-               onToggleFollow={onToggleFollow}
-               language={language}
-               showDistance={showDistance}
-             />
-           ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
-  const [activeView, setActiveView] = useState<'feed' | 'map' | 'zborovi' | 'notifications' | 'profile' | 'zbor-detail' | 'about' | 'privacy' | 'terms'>('feed');
+  const [activeView, setActiveView] = useState<'feed' | 'map' | 'zborovi' | 'notifications' | 'profile' | 'zbor-detail' | 'about' | 'privacy' | 'terms' | 'admin'>('feed');
   const [posts, setPosts] = useState<PostData[]>([]);
   const [user, setUser] = useState<any>(null);
   const [selectedZbor, setSelectedZbor] = useState<ZborData | null>(null);
@@ -637,8 +532,16 @@ export default function App() {
   }, []);
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-background max-w-screen-2xl mx-auto shadow-2xl relative overflow-hidden">
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} t={t} />
+    <div className="flex flex-col h-screen bg-background max-w-screen-2xl mx-auto shadow-2xl relative overflow-hidden">
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        t={t} 
+        onLogin={() => {
+          setIsAuthModalOpen(false);
+          setActiveView('admin');
+        }} 
+      />
       <RegisterZborFlow isOpen={isRegisterModalOpen} onClose={() => setIsRegisterModalOpen(false)} t={t} />
       <UserFeedbackModal isOpen={isUXModalOpen} onClose={() => setIsUXModalOpen(false)} t={t} />
 
@@ -667,482 +570,299 @@ export default function App() {
                   onClick={() => { openRegister(); setIsMenuOpen(false); }} 
                   className="text-left py-2 text-primary font-bold text-lg hover:translate-x-1 transition-transform"
                 >
-                  {t('Региструј збор')}
+                  {t('Покрени нови збор')}
                 </button>
-                <a 
-                  href="https://docs.google.com/forms/d/e/1FAIpQLSeGmJe4HKBhpqihb9FB8y9F_gLN_cLsRJCUpVa9I1AkH2dxiQ/viewform?usp=header"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-left py-2 text-primary font-bold text-lg hover:translate-x-1 transition-transform"
-                  onClick={() => setIsMenuOpen(false)}
+                <button 
+                  onClick={() => { setActiveView('about'); setIsMenuOpen(false); }} 
+                  className="text-left py-2 text-foreground font-medium text-lg hover:translate-x-1 transition-transform"
                 >
-                  {t('Анкета')}
-                </a>
-                <button className="text-left py-2 text-primary font-bold text-lg hover:translate-x-1 transition-transform">
                   {t('О нама')}
                 </button>
-                <button className="text-left py-2 text-primary font-bold text-lg hover:translate-x-1 transition-transform">
-                  {t('Услови коришћења')}
-                </button>
-                <button className="text-left py-2 text-primary font-bold text-lg hover:translate-x-1 transition-transform">
+                <button 
+                  onClick={() => { setActiveView('privacy'); setIsMenuOpen(false); }} 
+                  className="text-left py-2 text-foreground font-medium text-lg hover:translate-x-1 transition-transform"
+                >
                   {t('Политика приватности')}
                 </button>
               </div>
 
-              <div className="h-px bg-border my-2"></div>
-
-              {/* Login Section */}
-              <div className="flex flex-col gap-4">
-                <h2 className="text-2xl font-bold text-foreground mb-2">{t('Улогујте се')}</h2>
-                
-                <div className="flex flex-col gap-2">
-                  <label className="font-bold text-foreground text-sm">{t('Имејл')}</label>
-                  <input 
-                    type="email" 
-                    placeholder={t('Унесите имејл')}
-                    className="w-full border border-border rounded-md py-3 px-4 text-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className="font-bold text-foreground text-sm">{t('Лозинка')}</label>
-                  <input 
-                    type="password" 
-                    placeholder={t('Унесите лозинку')}
-                    className="w-full border border-border rounded-md py-3 px-4 text-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-3 mt-4">
-                  <button className="w-full bg-primary text-primary-foreground font-bold py-3.5 rounded-md shadow-md hover:bg-primary/90 transition-colors">
-                    {t('Пријави се')}
-                  </button>
-                  <button className="w-full border border-primary text-primary font-bold py-3.5 rounded-md hover:bg-accent transition-colors">
-                    {t('Заборављена лозинка')}
-                  </button>
-                </div>
+              {/* Theme Toggle */}
+              <div className="flex items-center justify-between pt-6 border-t border-accent">
+                <span className="font-bold text-foreground">{t('Тамна тема')}</span>
+                <button 
+                  onClick={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
+                  className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${theme === 'dark' ? 'bg-primary' : 'bg-gray-300'}`}
+                >
+                  <div className={`absolute top-1 left-1 size-6 bg-white rounded-full shadow-sm transition-transform duration-300 flex items-center justify-center ${theme === 'dark' ? 'translate-x-6' : 'translate-x-0'}`}>
+                    {theme === 'dark' ? <MoonIcon className="text-primary text-xs" /> : <SunIcon className="text-gray-500 text-xs" />}
+                  </div>
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Desktop Sidebar Navigation */}
-      <aside className="hidden lg:flex flex-col w-72 bg-background border-r border-accent shrink-0 z-40">
-        <div className="p-8 flex items-center gap-3">
-          <div className="w-[120px] h-[42px]">
-             <ZborAppLogoT2 />
-          </div>
-        </div>
-
-        <nav className="flex-1 px-4 space-y-1">
-          <button 
-            onClick={() => { setActiveView('feed'); setViewMode('list'); }}
-            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${activeView === 'feed' && viewMode === 'list' ? 'bg-accent text-primary' : 'text-foreground/70 hover:bg-card'}`}
-          >
-            <HouseIcon className="text-[22px] text-primary" />
-            {t('Почетна')}
-          </button>
-          <button 
-            onClick={() => { setActiveView('feed'); setViewMode('map'); }}
-            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${activeView === 'feed' && viewMode === 'map' ? 'bg-accent text-primary' : 'text-foreground/70 hover:bg-card'}`}
-          >
-            <LocationPinIcon className="text-[22px] text-primary" />
-            {t('Мапа')}
-          </button>
-          <button 
-            onClick={() => setActiveView('zborovi')}
-            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${activeView === 'zborovi' ? 'bg-accent text-primary' : 'text-foreground/70 hover:bg-card'}`}
-          >
-            <CompassIcon className="text-[22px] text-primary" />
-            {t('Истражи зборове')}
-          </button>
-          <a 
-            href="https://docs.google.com/forms/d/e/1FAIpQLSeGmJe4HKBhpqihb9FB8y9F_gLN_cLsRJCUpVa9I1AkH2dxiQ/viewform?usp=header"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all text-foreground/70 hover:bg-card"
-          >
-            <TasklistIcon className="text-[22px] text-primary" />
-            {t('Анкета')}
-          </a>
-          <button 
-            onClick={() => setActiveView('notifications')}
-            className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl font-bold transition-all ${activeView === 'notifications' ? 'bg-accent text-primary' : 'text-foreground/70 hover:bg-card'}`}
-          >
-            <div className="flex items-center gap-4">
-              <BellIcon className="text-[22px] text-primary" />
-              {t('Обавештења')}
+      {/* Main Header */}
+      <div className="bg-[#4f378a] text-white py-4 px-4 lg:px-8 shadow-md sticky top-0 z-[1000]">
+        <div className="flex items-center justify-between max-w-7xl mx-auto w-full">
+          {/* Logo & Brand */}
+          <div className="flex items-center gap-4 cursor-pointer" onClick={() => setActiveView('feed')}>
+            <button className="lg:hidden p-1 mr-2" onClick={(e) => { e.stopPropagation(); setIsMenuOpen(true); }}>
+               <MenuGridIcon className="text-[28px]" />
+            </button>
+            <div className="h-10 lg:h-12 w-auto">
+               <ZborAppLogoT1 />
             </div>
-            {unreadCount > 0 && (
-              <span className="bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full">{unreadCount}</span>
-            )}
-          </button>
-        </nav>
-
-        <div className="px-4 py-8 space-y-2 border-t border-accent">
-           <button className="w-full flex items-center gap-4 px-4 py-2 text-sm font-medium text-foreground/70 hover:text-primary">
-              <CogIcon className="text-[18px] text-primary" />
-              {t('Подешавања')}
-           </button>
-           <button className="w-full flex items-center gap-4 px-4 py-2 text-sm font-medium text-foreground/70 hover:text-primary">
-              <QuestionmarkIcon className="text-[18px] text-primary" />
-              {t('Центар за помоћ')}
-           </button>
-           <div className="mt-4 pt-4 border-t border-accent px-4 flex items-center gap-3">
-              <div onClick={() => setActiveView('profile')} className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer group">
-                  <div className="size-10 rounded-full bg-accent flex items-center justify-center text-primary font-bold group-hover:bg-primary group-hover:text-white transition-colors">JD</div>
-                  <div className="flex-1 min-w-0">
-                     <p className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">Јован Дучић</p>
-                     <p className="text-[10px] text-foreground/70 truncate">jovan.d@email.rs</p>
-                  </div>
-              </div>
-              <LeaveIcon className="text-[16px] text-foreground/70 cursor-pointer hover:text-red-500" />
-           </div>
-        </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden relative">
-        
-        {/* Mobile Header (Hidden on Desktop) */}
-        <div className="lg:hidden bg-primary px-4 flex items-center justify-between shrink-0 z-30 h-[60px]">
-          <div className="flex items-center gap-2 w-[70px] h-[25px]">
-             <ZborAppLogoT1 />
-          </div>
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
-              className="flex items-center gap-1 border border-white/60 px-2 py-1 rounded-md text-[10px] text-white font-bold transition-all hover:bg-white/10"
-              title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-            >
-               {theme === 'light' ? <MoonIcon className="text-[14px]" /> : <SunIcon className="text-[14px]" />}
-            </button>
-            <button 
-              onClick={() => setLanguage(prev => prev === 'cir' ? 'lat' : 'cir')}
-              onMouseEnter={() => setIsLangHovered(true)}
-              onMouseLeave={() => setIsLangHovered(false)}
-              className="flex items-center gap-1 border border-white/60 px-2 py-1 rounded-md text-[10px] text-white font-bold transition-all hover:bg-white/10"
-            >
-              <span>{isLangHovered ? (language === 'cir' ? 'LAT' : 'ЋИР') : (language === 'cir' ? 'ЋИР' : 'LAT')}</span>
-            </button>
-            <button onClick={() => setIsMenuOpen(true)} className="text-white p-1">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Desktop Top Search (Hidden on Mobile) */}
-        <header className="hidden lg:flex items-center justify-end px-8 py-4 bg-background border-b border-accent shrink-0">
-           <div className="flex items-center gap-6">
-              <button 
-                onClick={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
-                className="p-2 rounded-full hover:bg-accent transition-colors text-primary"
-                title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-              >
-                 {theme === 'light' ? <MoonIcon className="text-[20px]" /> : <SunIcon className="text-[20px]" />}
-              </button>
-              <button 
-                onClick={() => setLanguage(prev => prev === 'cir' ? 'lat' : 'cir')}
-                onMouseEnter={() => setIsLangHovered(true)}
-                onMouseLeave={() => setIsLangHovered(false)}
-                className="text-xs font-bold text-primary border border-primary px-3 py-1.5 rounded-lg hover:bg-accent transition-colors"
-              >
-                {isLangHovered ? (language === 'cir' ? 'PREBACI NA LATINICU' : 'PREBACI NA ĆIRILICU') : (language === 'cir' ? 'ЋИРИЛИЦА' : 'LATINICA')}
-              </button>
-              <button className="text-foreground/70 hover:text-primary relative">
-                <BellIcon className="text-[24px]" />
-                {unreadCount > 0 && <span className="absolute top-0 right-0 size-2 bg-red-500 rounded-full border border-white"></span>}
-              </button>
-           </div>
-        </header>
-
-        {/* View Content Area */}
-        <div className="flex-1 overflow-hidden relative flex flex-col lg:flex-row">
-          
-          <div className="flex-1 overflow-y-auto relative flex flex-col">
-            <div className="flex-1 flex flex-col">
-              {isLocating && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center">
-                   <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-                   <p className="text-sm font-bold text-primary animate-pulse">{t('Одређивање ваше локације...')}</p>
-                </div>
-              )}
-
-              {activeView === 'feed' && (
-                <div className={`flex-1 flex flex-col px-4 py-6 lg:px-8 ${viewMode === 'map' ? 'h-full !p-0' : ''}`}>
-                   <div className={`mx-auto w-full ${viewMode === 'map' ? 'h-full max-w-none flex flex-col' : 'max-w-4xl'}`}>
-                      <div className={viewMode === 'map' ? 'absolute top-4 left-4 right-4 z-[500] max-w-4xl mx-auto' : ''}>
-                        <SearchFilterBar 
-                          onFilterChange={handleFilterChange} 
-                          onSaveSearch={handleSaveSearch}
-                          isLoggedIn={!!user}
-                          language={language}
-                          onEnableLocation={handleEnableLocation}
-                          locationEnabled={locationEnabled}
-                          viewMode={viewMode}
-                          onViewChange={handleViewChange}
-                        />
-                      </div>
-                      
-                      {viewMode === 'map' ? (
-                         <div className="flex-1 h-full min-h-[500px]">
-                            <MapComponent 
-                              zborovi={sortedZborovi} 
-                              posts={posts.length > 0 ? posts : MOCK_POSTS} 
-                              onZborClick={handleZborClick}
-                              onPostClick={(post) => handleZborClick(post.zbor)}
-                              language={language}
-                            />
-                         </div>
-                      ) : viewMode === 'calendar' ? (
-                        <div className="mb-10">
-                          <CalendarView 
-                            events={sortedPosts}
-                            onAuthRequired={openAuth}
-                            onZborClick={handleZborClick}
-                            followedZborIds={followedZborIds}
-                            onToggleFollow={toggleFollow}
-                            language={language}
-                            locationEnabled={locationEnabled}
-                          />
-                        </div>
-                      ) : (
-                        <>
-                          <div className="mb-10">
-                            <div className="flex items-center justify-between mb-6">
-                              <h2 className="text-lg lg:text-xl font-bold text-foreground uppercase tracking-wider flex items-center gap-3">
-                                <CalendarIcon className="text-[22px]" />
-                                {filters.sort === 'closest' && locationEnabled ? t('Најближи догађаји') : t('Новији догађаји')}
-                              </h2>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
-                              {events.map(post => (
-                                <PostCard 
-                                  key={post.id} 
-                                  post={post} 
-                                  onAuthRequired={openAuth} 
-                                  onZborClick={handleZborClick}
-                                  isFollowed={followedZborIds.includes(post.zbor.id)}
-                                  onToggleFollow={toggleFollow}
-                                  language={language}
-                                  showDistance={locationEnabled}
-                                />
-                              ))}
-                            </div>
-                          </div>
-
-                          <div>
-                            <div className="flex items-center justify-between mb-6">
-                              <h2 className="text-lg lg:text-xl font-bold text-foreground uppercase tracking-wider flex items-center gap-3">
-                                <MegaphoneIcon className="text-[22px]" />
-                                {filters.sort === 'closest' && locationEnabled ? t('Најближе објаве') : t('Новије објаве')}
-                              </h2>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
-                              {regularPosts.map(post => (
-                                <PostCard 
-                                  key={post.id} 
-                                  post={post} 
-                                  onAuthRequired={openAuth} 
-                                  onZborClick={handleZborClick}
-                                  isFollowed={followedZborIds.includes(post.zbor.id)}
-                                  onToggleFollow={toggleFollow}
-                                  language={language}
-                                  showDistance={locationEnabled}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        </>
-                      )}
-                   </div>
-                </div>
-              )}
-
-              {/* Deprecated standalone map view, kept for direct navigation if needed, but redundant now */}
-              {activeView === 'map' && viewMode !== 'map' && (
-                 <div className="h-full flex flex-col relative bg-muted/30 min-h-[500px]">
-                    <MapComponent 
-                      zborovi={sortedZborovi} 
-                      posts={posts.length > 0 ? posts : MOCK_POSTS} 
-                      onZborClick={handleZborClick}
-                      onPostClick={(post) => handleZborClick(post.zbor)}
-                      language={language}
-                    />
-                </div>
-              )}
-
-              {activeView === 'zborovi' && (
-                <div className="flex-1 px-4 py-6 lg:px-8 max-w-5xl mx-auto w-full">
-                    <SearchFilterBar 
-                      onFilterChange={handleFilterChange} 
-                      onSaveSearch={handleSaveSearch}
-                      isLoggedIn={!!user}
-                      language={language}
-                      onEnableLocation={handleEnableLocation}
-                      locationEnabled={locationEnabled}
-                      viewMode={viewMode}
-                      onViewChange={setViewMode}
-                      showDateFilter={false}
-                      showTypeFilter={false}
-                      showViewToggle={false}
-                    />
-                    <h2 className="text-2xl font-bold text-foreground mb-8">
-                      {locationEnabled ? t('Најближи зборови вама') : t('Истражите зборове')}
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {sortedZborovi.map(zbor => (
-                        <ZborCard 
-                          key={zbor.id} 
-                          zbor={zbor} 
-                          onZborClick={handleZborClick}
-                          isFollowed={followedZborIds.includes(zbor.id)}
-                          onToggleFollow={toggleFollow}
-                          language={language}
-                          showDistance={locationEnabled}
-                        />
-                      ))}
-                    </div>
-                </div>
-              )}
-
-              {activeView === 'notifications' && (
-                <NotificationsView 
-                  notifications={MOCK_NOTIFICATIONS} 
-                  followedIds={followedZborIds} 
-                  onZborClick={handleZborIdClick}
-                  t={t}
-                />
-              )}
-
-              {activeView === 'zbor-detail' && selectedZbor && (
-                <ZborDetailPage 
-                  zbor={selectedZbor} 
-                  posts={posts.length > 0 ? posts : MOCK_POSTS}
-                  onBack={() => setActiveView('feed')} 
-                  onAuthRequired={openAuth}
-                  isFollowed={followedZborIds.includes(selectedZbor.id)}
-                  onToggleFollow={toggleFollow}
-                  language={language}
-                  showDistance={locationEnabled}
-                />
-              )}
-              
-              {activeView === 'about' && <Onama />}
-              {activeView === 'privacy' && <PolitikaPrivatnosti />}
-              {activeView === 'terms' && <UsloviKoriscenja />}
-              {activeView === 'profile' && (
-                <ProfileView 
-                  user={user} 
-                  followedZborovi={sortedZborovi.filter(z => followedZborIds.includes(z.id))}
-                  onZborClick={handleZborClick}
-                  t={t}
-                />
-              )}
-            </div>
-            
-            {activeView !== 'map' && (
-              <div className="shrink-0 z-10 relative">
-                <Footer 
-                  onNavigate={(view) => {
-                    if (view === 'home') setActiveView('feed');
-                    else setActiveView(view);
-                  }} 
-                  onRegister={openRegister} 
-                />
-              </div>
-            )}
-            
-            {/* Mobile bottom spacer for nav */}
-            <div className="h-[100px] lg:hidden shrink-0" />
           </div>
 
-          {/* Desktop Right Sidebar (Trends/Suggestions) */}
-          <aside className="hidden xl:flex flex-col w-80 bg-background border-l border-accent p-6 shrink-0 overflow-y-auto">
-             <div className="bg-white rounded-2xl p-5 border border-accent shadow-sm mb-6">
-                <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
-                   <MegaphoneIcon className="text-[18px] text-primary" />
-                   {t('Актуелно у Београду')}
-                </h3>
-                <div className="space-y-4">
-                   <div className="cursor-pointer group">
-                      <p className="text-[10px] font-bold text-foreground/70 uppercase mb-0.5 group-hover:text-primary">#екологија</p>
-                      <p className="text-sm font-bold text-foreground leading-tight">Протест против сече дрвећа у Његошевој</p>
-                   </div>
-                   <div className="cursor-pointer group">
-                      <p className="text-[10px] font-bold text-foreground/70 uppercase mb-0.5 group-hover:text-primary">#инфраструктура</p>
-                      <p className="text-sm font-bold text-foreground leading-tight">Нова расвета у Устаничкој улици</p>
-                   </div>
-                   <div className="cursor-pointer group">
-                      <p className="text-[10px] font-bold text-foreground/70 uppercase mb-0.5 group-hover:text-primary">#заједница</p>
-                      <p className="text-sm font-bold text-foreground leading-tight">Акција чишћења Чубурског парка</p>
-                   </div>
-                </div>
-             </div>
+          {/* Desktop Nav */}
+          <div className="hidden lg:flex items-center gap-8">
+            <button onClick={() => setActiveView('feed')} className={`font-bold hover:text-white/80 transition-colors ${activeView === 'feed' ? 'underline decoration-2 underline-offset-4' : ''}`}>
+              {t('Почетна')}
+            </button>
+            <button onClick={() => setActiveView('zborovi')} className={`font-bold hover:text-white/80 transition-colors ${activeView === 'zborovi' ? 'underline decoration-2 underline-offset-4' : ''}`}>
+              {t('Зборови')}
+            </button>
+            <button onClick={() => setActiveView('map')} className={`font-bold hover:text-white/80 transition-colors ${activeView === 'map' ? 'underline decoration-2 underline-offset-4' : ''}`}>
+              {t('Мапа')}
+            </button>
+          </div>
 
-             <div className="bg-primary rounded-2xl p-6 text-primary-foreground shadow-lg shadow-primary/20">
-                <h3 className="font-bold text-lg mb-2">{t('Региструјте свој збор')}</h3>
-                <p className="text-xs text-primary-foreground/80 leading-relaxed mb-4">
-                   {t('Ваш збор је одлучио да користи ову платформу? Региструјте га овде. Верификујемо све који су стали уз студенте.')}
-                </p>
-                <button 
-                  onClick={openRegister}
-                  className="w-full bg-background text-primary py-2.5 rounded-xl text-xs font-bold hover:bg-accent transition-colors"
-                >
-                   {t('Региструј збор')}
-                </button>
-             </div>
-          </aside>
-        </div>
-
-        {/* Mobile Bottom Nav (Visible on Mobile Only) */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border px-2 pt-3 pb-6 flex items-center justify-around z-[1000] shadow-[0_-4px_12px_rgba(0,0,0,0.05)] h-[80px]">
-          <button 
-            onClick={() => { setActiveView('feed'); setViewMode('list'); }}
-            className={`flex flex-col items-center justify-center gap-1 transition-all min-w-[60px] h-full ${activeView === 'feed' && viewMode === 'list' ? 'text-primary' : 'text-primary/60'}`}
-          >
-            <HouseIcon className="text-[24px]" strokeWidth={activeView === 'feed' && viewMode === 'list' ? 1.5 : 1} />
-            <span className="text-[10px] font-bold uppercase tracking-tight">{t('Почетна')}</span>
-          </button>
-          <button 
-            onClick={() => { setActiveView('feed'); setViewMode('map'); }}
-            className={`flex flex-col items-center justify-center gap-1 transition-all min-w-[60px] h-full ${activeView === 'feed' && viewMode === 'map' ? 'text-primary' : 'text-primary/60'}`}
-          >
-            <LocationPinIcon className="text-[24px]" strokeWidth={activeView === 'feed' && viewMode === 'map' ? 1.5 : 1} />
-            <span className="text-[10px] font-bold uppercase tracking-tight">{t('Мапа')}</span>
-          </button>
-          <button 
-            onClick={() => { setActiveView('zborovi'); }}
-            className={`flex flex-col items-center justify-center gap-1 transition-all min-w-[60px] h-full ${activeView === 'zborovi' ? 'text-primary' : 'text-primary/60'}`}
-          >
-            <CompassIcon className="text-[24px]" strokeWidth={activeView === 'zborovi' ? 1.5 : 1} />
-            <span className="text-[10px] font-bold uppercase tracking-tight">{t('Зборови')}</span>
-          </button>
-          <button 
-            onClick={() => { setActiveView('notifications'); }}
-            className={`flex flex-col items-center justify-center gap-1 relative transition-all min-w-[60px] h-full ${activeView === 'notifications' ? 'text-primary' : 'text-primary/60'}`}
-          >
-            <div className="relative">
-              <BellIcon className="text-[24px]" strokeWidth={activeView === 'notifications' ? 1.5 : 1} />
+          {/* Actions */}
+          <div className="flex items-center gap-3 lg:gap-5">
+            <button className="p-2 relative hover:bg-white/10 rounded-full transition-colors" onClick={() => setActiveView('notifications')}>
+              <BellIcon className="text-[24px]" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 size-4 bg-primary text-primary-foreground text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white">
-                  {unreadCount}
-                </span>
+                <span className="absolute top-1.5 right-1.5 size-2.5 bg-red-500 border border-[#4f378a] rounded-full animate-pulse"></span>
               )}
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-tight">{t('Обавештења')}</span>
-          </button>
-          <button 
-             onClick={() => { setActiveView('profile'); }}
-             className={`flex flex-col items-center justify-center gap-1 transition-all min-w-[60px] h-full ${activeView === 'profile' ? 'text-primary' : 'text-primary/60'}`}
-          >
-            <PersonIcon className="text-[24px]" strokeWidth={activeView === 'profile' ? 1.5 : 1} />
-            <span className="text-[10px] font-bold uppercase tracking-tight">{t('Профил')}</span>
-          </button>
+            </button>
+            
+            {user ? (
+              <div className="flex items-center gap-3 cursor-pointer hover:bg-white/10 py-1.5 px-3 rounded-lg transition-colors" onClick={() => setActiveView('profile')}>
+                 <div className="size-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">
+                    {user.email?.[0].toUpperCase()}
+                 </div>
+                 <span className="hidden lg:inline text-sm font-bold">{t('Профил')}</span>
+              </div>
+            ) : (
+              <button 
+                onClick={openAuth}
+                className="bg-white text-[#4f378a] px-5 py-2 rounded-lg font-bold text-sm hover:bg-white/90 transition-colors shadow-sm"
+              >
+                {t('Пријава')}
+              </button>
+            )}
+          </div>
         </div>
+      </div>
 
-      </main>
+      <div className="flex-1 overflow-hidden relative flex flex-col">
+        {/* Main Content Area */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+          {activeView === 'map' && (
+             <div className="h-full w-full relative">
+                <div className="absolute top-4 left-4 z-[500] w-[calc(100%-32px)] max-w-md">
+                   <SearchFilterBar 
+                      filters={filters} 
+                      onFilterChange={handleFilterChange} 
+                      t={t} 
+                      viewMode={viewMode}
+                      onViewChange={handleViewChange}
+                      onSaveSearch={() => handleSaveSearch(filters)}
+                   />
+                </div>
+                <MapComponent 
+                   posts={sortedPosts} 
+                   zborovi={sortedZborovi} 
+                   userLocation={null}
+                   onMarkerClick={(type, id) => {
+                      if (type === 'zbor') handleZborIdClick(id);
+                      // Handle post click if needed
+                   }}
+                />
+                <MapLegend t={t} />
+             </div>
+          )}
+
+          {activeView === 'feed' && (
+            <div className="max-w-7xl mx-auto w-full p-4 lg:p-8">
+               <div className="flex flex-col lg:flex-row gap-8">
+                  {/* Left Sidebar (Desktop) */}
+                  <div className="hidden lg:block w-64 shrink-0 space-y-6">
+                     <div className="bg-card rounded-xl p-6 shadow-sm border border-accent">
+                        <div className="flex items-center gap-3 mb-6">
+                           <div className="size-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                              <LocationPinIcon className="text-[24px]" />
+                           </div>
+                           <div>
+                              <p className="text-xs text-foreground/60 font-bold uppercase tracking-wider">{t('Ваша локација')}</p>
+                              <p className="text-sm font-bold text-foreground">Врачар, Београд</p>
+                           </div>
+                        </div>
+                        <button onClick={openRegister} className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-bold text-sm shadow-md hover:bg-primary/90 transition-colors">
+                           {t('Покрени нови збор')}
+                        </button>
+                     </div>
+
+                     <div className="bg-card rounded-xl p-6 shadow-sm border border-accent">
+                        <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                           <span className="size-2 bg-green-500 rounded-full"></span>
+                           {t('Активни зборови')}
+                        </h3>
+                        <div className="space-y-4">
+                           {MOCK_ZBOROVI.slice(0, 3).map(zbor => (
+                              <div key={zbor.id} onClick={() => handleZborClick(zbor)} className="flex items-center gap-3 cursor-pointer group">
+                                 <div className="size-10 rounded-full overflow-hidden border border-accent group-hover:border-primary transition-colors">
+                                    <ImageWithFallback src={zbor.avatar} alt={zbor.name} className="size-full object-cover" />
+                                 </div>
+                                 <div>
+                                    <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{t(zbor.name)}</p>
+                                    <p className="text-[10px] text-foreground/60">{zbor.stats?.members} {t('чланова')}</p>
+                                 </div>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                  </div>
+
+                  {/* Main Feed */}
+                  <div className="flex-1 min-w-0">
+                     <SearchFilterBar 
+                        filters={filters} 
+                        onFilterChange={handleFilterChange} 
+                        t={t} 
+                        viewMode={viewMode}
+                        onViewChange={handleViewChange}
+                        onSaveSearch={() => handleSaveSearch(filters)}
+                     />
+                     
+                     {!locationEnabled && <LocationBanner onEnable={handleEnableLocation} t={t} />}
+
+                     {viewMode === 'list' && (
+                        <div className="space-y-6 mt-6">
+                           {sortedPosts.map(post => (
+                              <PostCard 
+                                key={post.id} 
+                                post={post} 
+                                onAuthRequired={openAuth}
+                                isFollowed={followedZborIds.includes(post.zbor.id)}
+                                onToggleFollow={toggleFollow}
+                                language={language}
+                                showDistance={locationEnabled}
+                              />
+                           ))}
+                           {sortedPosts.length === 0 && (
+                              <div className="text-center py-20 bg-card rounded-2xl border border-dashed border-accent">
+                                 <p className="text-foreground/60 font-medium">{t('Нема резултата за вашу претрагу.')}</p>
+                                 <button onClick={() => setFilters({ ...filters, query: '', type: 'all', dateRange: 'all' })} className="text-primary font-bold text-sm mt-2 hover:underline">
+                                    {t('Поништи филтере')}
+                                 </button>
+                              </div>
+                           )}
+                        </div>
+                     )}
+
+                     {viewMode === 'calendar' && (
+                        <div className="mt-6">
+                           <CalendarView posts={events} onEventClick={(id) => console.log(id)} t={t} />
+                        </div>
+                     )}
+                  </div>
+
+                  {/* Right Sidebar (Desktop) - Statistics */}
+                  <div className="hidden xl:block w-72 shrink-0">
+                     <div className="sticky top-24 space-y-6">
+                        <div className="bg-card rounded-xl p-6 shadow-sm border border-accent">
+                           <h3 className="text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('Статистика')}</h3>
+                           <div className="grid grid-cols-2 gap-4">
+                              <div className="bg-accent/50 p-3 rounded-lg text-center">
+                                 <p className="text-2xl font-black text-primary">124</p>
+                                 <p className="text-[10px] text-foreground/60 font-bold">{t('ЗБОРОВА')}</p>
+                              </div>
+                              <div className="bg-accent/50 p-3 rounded-lg text-center">
+                                 <p className="text-2xl font-black text-chart-2">5.2k</p>
+                                 <p className="text-[10px] text-foreground/60 font-bold">{t('КОМШИЈА')}</p>
+                              </div>
+                              <div className="bg-accent/50 p-3 rounded-lg text-center col-span-2">
+                                 <p className="text-2xl font-black text-chart-4">89</p>
+                                 <p className="text-[10px] text-foreground/60 font-bold">{t('АКЦИЈА ОВОГ МЕСЕЦА')}</p>
+                              </div>
+                           </div>
+                        </div>
+                        
+                        <div className="bg-[#4f378a] rounded-xl p-6 shadow-lg text-white text-center relative overflow-hidden">
+                           <div className="relative z-10">
+                              <h3 className="font-bold text-lg mb-2">{t('Подржи ЗборАпп')}</h3>
+                              <p className="text-xs opacity-80 mb-4 leading-relaxed">
+                                 {t('Помозите нам да градимо јаче локалне заједнице.')}
+                              </p>
+                              <button className="bg-white text-[#4f378a] w-full py-2.5 rounded-lg font-bold text-sm hover:bg-white/90 transition-colors">
+                                 {t('Донирај')}
+                              </button>
+                           </div>
+                           <div className="absolute top-0 right-0 size-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+          )}
+
+          {activeView === 'zborovi' && (
+             <div className="max-w-5xl mx-auto p-4 lg:p-8">
+                <h2 className="text-2xl font-bold text-foreground mb-6">{t('Сви зборови')}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                   {sortedZborovi.map(zbor => (
+                      <ZborCard 
+                        key={zbor.id} 
+                        zbor={zbor} 
+                        onClick={handleZborClick} 
+                        isFollowed={followedZborIds.includes(zbor.id)}
+                        onToggleFollow={toggleFollow}
+                        t={t}
+                      />
+                   ))}
+                </div>
+             </div>
+          )}
+
+          {activeView === 'zbor-detail' && selectedZbor && (
+            <ZborDetailPage 
+              zbor={selectedZbor}
+              posts={sortedPosts}
+              onBack={() => setActiveView('feed')}
+              isFollowed={followedZborIds.includes(selectedZbor.id)}
+              onToggleFollow={toggleFollow}
+            />
+          )}
+
+          {activeView === 'notifications' && (
+             <NotificationsView 
+               notifications={MOCK_NOTIFICATIONS} 
+               followedIds={followedZborIds} 
+               onZborClick={handleZborIdClick} 
+               t={t} 
+             />
+          )}
+
+          {activeView === 'profile' && user && (
+             <ProfileView user={user} t={t} onLogout={async () => { await supabase.auth.signOut(); setUser(null); setActiveView('feed'); }} />
+          )}
+
+          {activeView === 'admin' && (
+             <AdminDashboard />
+          )}
+
+          {(activeView === 'about' || activeView === 'privacy' || activeView === 'terms') && (
+             <div className="max-w-4xl mx-auto p-8 bg-card min-h-full">
+                {activeView === 'about' && <Onama />}
+                {activeView === 'privacy' && <PolitikaPrivatnosti />}
+                {activeView === 'terms' && <UsloviKoriscenja />}
+             </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
